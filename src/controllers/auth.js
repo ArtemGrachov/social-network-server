@@ -8,6 +8,7 @@ const errorFactory = require('../utils/error-factory');
 const errors = require('../errors');
 const success = require('../success');
 const constants = require('../constants');
+const mail = require('../mail');
 
 exports.registration = async (req, res, next) => {
     try {
@@ -177,3 +178,71 @@ exports.changePassword = async (req, res, next) => {
     }
 }
 
+exports.generateResetPasswordToken = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            throw errorFactory(422, errors.INVALID_EMAIL);
+        }
+        const resetPasswordToken = user.getResetPasswordToken();
+
+        const mailOptions = {
+            from: `'"${constants.EMAIL_FROM_NAME}" <${constants.EMAIL_FROM}>'`,
+            to: email,
+            subject: 'Password reset link',
+            text: `Your reset link is: ${resetPasswordToken}`
+        };
+
+        await mail.sendMail(mailOptions);
+
+        res
+            .status(200)
+            .json({
+                message: success.RESET_PASSWORD_TOKEN_GENERATED_SUCCESSFULLY
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.resetPassword = async (req, res, next) => {
+    try {
+        const { resetPasswordToken, password, passwordConfirmation } = req.body;
+
+        let decodedToken;
+        try {
+            decodedToken = jwt.verify(resetPasswordToken, constants.RESET_PASSWORD_TOKEN);
+        } catch {
+            throw errorFactory(401, errors.INVALID_RESET_PASSWORD_TOKEN);
+        }
+
+        const { userId } = decodedToken;
+
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            throw errorFactory(401, errors.INVALID_RESET_PASSWORD_TOKEN);
+        }
+
+        if (password !== passwordConfirmation) {
+            throw errorFactory(422, errors.PASSWORDS_ARE_NOT_EQUAL);
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        user.password = passwordHash;
+
+        await user.save();
+
+        res
+            .status(200)
+            .json({
+                message: success.PASSWORD_UPDATED_SUCCESSFULLY
+            });
+    } catch (err) {
+        next(err);
+    }
+}

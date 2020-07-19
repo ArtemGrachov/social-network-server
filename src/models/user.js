@@ -38,18 +38,28 @@ User.associate = models => {
 
 User.prototype.getAuthTokens = function() {
     const token = jwt.sign(
-        { userId: this.id.toString() },
+        { userId: this.id },
         constants.JWT_KEY,
         { expiresIn: constants.JWT_LIFE }
     );
 
     const refreshToken = jwt.sign(
-        { userId: this.id.toString() },
+        { userId: this.id },
         constants.JWT_REFRESH_KEY,
         { expiresIn: constants.JWT_REFRESH_LIFE }
     );
 
     return { token, refreshToken };
+}
+
+User.prototype.getResetPasswordToken = function() {
+    const resetPasswordToken = jwt.sign(
+        { userId: this.id },
+        constants.RESET_PASSWORD_TOKEN,
+        { expiresIn: constants.RESET_PASSWORD_TOKEN_LIFE }
+    );
+
+    return resetPasswordToken;
 }
 
 module.exports = User;

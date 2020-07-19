@@ -8,5 +8,13 @@ module.exports = {
     JWT_KEY: process.env.JWT_KEY,
     JWT_LIFE: process.env.JWT_LIFE,
     JWT_REFRESH_KEY: process.env.JWT_REFRESH_KEY,
-    JWT_REFRESH_LIFE: process.env.JWT_REFRESH_LIFE
+    JWT_REFRESH_LIFE: process.env.JWT_REFRESH_LIFE,
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+    EMAIL_PORT: process.env.EMAIL_PORT,
+    EMAIL_FROM: process.env.EMAIL_FROM,
+    EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
+    RESET_PASSWORD_TOKEN: process.env.RESET_PASSWORD_TOKEN,
+    RESET_PASSWORD_TOKEN_LIFE: process.env.RESET_PASSWORD_TOKEN_LIFE
 };

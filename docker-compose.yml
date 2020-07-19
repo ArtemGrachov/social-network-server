@@ -14,6 +14,14 @@ services:
         - JWT_REFRESH_KEY=jwt_refresh_key
         - JWT_LIFE=1h
         - JWT_REFRESH_LIFE=7d
+        - RESET_PASSWORD_TOKEN=reset_password_token
+        - RESET_PASSWORD_TOKEN_LIFE=15m
+        - EMAIL_HOST=smtp.mailtrap.io
+        - EMAIL_USER=e35adb8b10b07a
+        - EMAIL_PASSWORD=7f5b18ff98f88d
+        - EMAIL_PORT=2525
+        - EMAIL_FROM=sn@sn.com
+        - EMAIL_FROM_NAME=SN
     ports:
       - "8080:8080"
     volumes:
