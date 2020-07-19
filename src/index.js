@@ -1,12 +1,16 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const constants = require('./constants');
-const sequelize = require('./models/index');
 
+const sequelize = require('./models/index');
 require('./models/user');
 require('./models/post');
 require('./models/community');
+
+const authRoutes = require('./routes/auth');
+
+const constants = require('./constants');
+const errors = require('./errors');
 
 app.use(bodyParser.json());
 
@@ -17,10 +21,20 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/', (req, res) => {
+app.use('/auth', authRoutes);
+
+app.use((err, req, res, next) => {
+    console.log(err);
+
+    const resError = { message: err.statusCode ? err.message : errors.SERVER_ERROR };
+
+    if (err.data) {
+        resError.data = err.data;
+    };
+
     res
-        .status(200)
-        .json({ message: 'Hello, world' });
+        .status(err.statusCode || 500)
+        .json(resError);
 });
 
 const init = async () => {
@@ -41,7 +55,7 @@ const init = async () => {
         });
 
     try {
-        await sequelize.sync({ force: true });
+        await sequelize.sync();
     } catch (err) {
         console.log('Database sync error');
         console.log(err);
