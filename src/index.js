@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const constants = require('./constants');
-const database = require('./models/index');
-
+const sequelize = require('./models/index');
+require('./models/user');
+require('./models/post');
+require('./models/community');
 const PORT = constants.PORT;
 
 app.use(bodyParser.json());
@@ -21,14 +23,33 @@ app.use('/', (req, res) => {
         .json({ message: 'Hello, world' });
 });
 
-database
-    .authenticate()
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
-        });
-    })
-    .catch(err => {
+const init = async () => {
+    try {
+        await sequelize.authenticate();
+    } catch (err) {
         console.log('Database connection error');
         console.log(err);
+    }
+
+    const { models } = sequelize;
+
+    Object.keys(models)
+        .map(key => models[key])
+        .filter(model => !!model.associate)
+        .forEach(model => {
+            model.associate(models);
+        });
+
+    try {
+        await sequelize.sync({ force: true });
+    } catch (err) {
+        console.log('Database sync error');
+        console.log(err);
+    }
+    
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
     });
+};
+
+init();
