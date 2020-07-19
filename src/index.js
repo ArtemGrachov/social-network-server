@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const constants = require('./constants');
+const database = require('./models/index');
 
 const PORT = constants.PORT;
 
@@ -20,6 +21,14 @@ app.use('/', (req, res) => {
         .json({ message: 'Hello, world' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+database
+    .authenticate()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.log('Database connection error');
+        console.log(err);
+    });

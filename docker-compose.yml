@@ -5,11 +5,16 @@ services:
     build: .
     environment:
         - PORT=8080
+        - DB_HOST=database
+        - DB_DIALECT=mysql
+        - DB_NAME=seven_nineteen_db
+        - DB_USER=seven_nineteen_user
+        - DB_PASSWORD=123456
     ports:
       - "8080:8080"
     volumes:
       - ./src:/var/www
-      - ./src/node_modules:/var/www/node_modules
+      - /var/www/node_modules
     links:
       - database
 
