@@ -135,3 +135,45 @@ exports.refreshToken = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.changePassword = async (req, res, next) => {
+    try {
+        const password = req.body.password;
+        const passwordConfirmation = req.body.passwordConfirmation;
+
+        if (!password || !passwordConfirmation) {
+            throw errorFactory(422, errors.INVALID_INPUT);
+        }
+
+        const validationErrors = [];
+
+        if (!validator.isLength(password, { min: 8, max: 18 })) {
+            validationErrors.push(errors.INVALID_PASSWORD);
+        }
+
+        if (password !== passwordConfirmation) {
+            validationErrors.push(errors.PASSWORDS_ARE_NOT_EQUAL);
+        }
+
+        if (validationErrors.length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        const user = await User.findByPk(req.userId);
+
+        user.password = passwordHash;
+
+        await user.save();
+
+        res
+            .status(200)
+            .json({
+                message: success.PASSWORD_UPDATED_SUCCESSFULLY
+            });
+    } catch(err) {
+        next(err);
+    }
+}
+

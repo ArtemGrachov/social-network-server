@@ -7,6 +7,7 @@ require('./models/user');
 require('./models/post');
 require('./models/community');
 
+const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
 
 const constants = require('./constants');
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(authMiddleware);
 app.use('/auth', authRoutes);
 
 app.use((err, req, res, next) => {
