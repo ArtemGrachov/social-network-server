@@ -1,0 +1,25 @@
+version: "3"
+services:
+  server:
+    container_name: seven_nineteen_server
+    build: .
+    environment:
+        - PORT=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/var/www
+      - ./src/node_modules:/var/www/node_modules
+    links:
+      - database
+
+  database:
+    container_name: seven_nineteen_database
+    image: mysql
+    ports:
+      - "27017:27017"
+    environment: 
+      - MYSQL_ROOT_PASSWORD=qwerty
+      - MYSQL_DATABASE=seven_nineteen_db
+      - MYSQL_USER=seven_nineteen_user
+      - MYSQL_PASSWORD=123456
