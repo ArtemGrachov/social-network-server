@@ -78,3 +78,34 @@ exports.registration = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.logIn = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        const [user] = await User.findAll({
+            limit: 1,
+            where: {
+                email
+            }
+        });
+
+        if (!user) {
+            throw errorFactory(401, errors.INCORRECT_EMAIL_OR_PASSWORD);
+        }
+
+        const passwordCheck = await bcrypt.compare(password, user.password);
+
+        if (!passwordCheck) {
+            throw errorFactory(401, errors.INCORRECT_EMAIL_OR_PASSWORD);
+        }
+
+        const tokens = user.getAuthTokens();
+
+        res
+            .status(200)
+            .json(tokens);
+    } catch (err) {
+        next(err);
+    }
+}

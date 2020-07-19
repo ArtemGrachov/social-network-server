@@ -1,5 +1,9 @@
 const Sequelize = require('sequelize');
+const jwt = require('jsonwebtoken');
+
 const sequelize = require('./');
+
+const constants = require('../constants');
 
 const User = sequelize.define('User', {
     firstname: {
@@ -31,5 +35,21 @@ User.associate = models => {
         { through: 'UsersCommunities' }
     );
 };
+
+User.prototype.getAuthTokens = function() {
+    const token = jwt.sign(
+        { userId: this.id.toString() },
+        constants.JWT_KEY,
+        { expiresIn: constants.JWT_LIFE }
+    );
+
+    const refreshToken = jwt.sign(
+        { userId: this.id.toString() },
+        constants.JWT_REFRESH_KEY,
+        { expiresIn: constants.JWT_REFRESH_LIFE }
+    );
+
+    return { token, refreshToken };
+}
 
 module.exports = User;

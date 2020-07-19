@@ -10,6 +10,10 @@ services:
         - DB_NAME=seven_nineteen_db
         - DB_USER=seven_nineteen_user
         - DB_PASSWORD=123456
+        - JWT_KEY=jwt_key
+        - JWT_REFRESH_KEY=jwt_refresh_key
+        - JWT_LIFE=1h
+        - JWT_REFRESH_LIFE=7d
     ports:
       - "8080:8080"
     volumes:
