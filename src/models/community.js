@@ -9,19 +9,15 @@ const Community = sequelize.define('Community', {
     description: {
         type: Sequelize.TEXT
     }
-}, {
-    tableName: 'communities'
 });
 
 Community.associate = models => {
     Community.belongsToMany(
         models.User,
-        { through: 'usersCommunities' }
+        { through: 'UsersCommunities' }
     );
-    Community.hasMany(
-        models.Post,
-        { foreignKey: 'communityId', as: 'community' }
-    );
+
+    Community.hasMany(models.Post);
 }
 
 module.exports = Community;

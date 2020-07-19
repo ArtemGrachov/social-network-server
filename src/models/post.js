@@ -6,19 +6,11 @@ const Post = sequelize.define('Post', {
         type: Sequelize.TEXT,
         allowNull: false
     }
-}, {
-    tableName: 'posts'
 });
 
 Post.associate = models => {
-    Post.belongsTo(
-        models.User,
-        { foreignKey: 'authorId', as: 'author' }
-    );
-    Post.belongsTo(
-        models.Community,
-        { foreignKey: 'communityId', as: 'community' }
-    )
+    Post.belongsTo(models.User);
+    Post.belongsTo(models.Community)
 }
 
 module.exports = Post;

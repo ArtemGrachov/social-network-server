@@ -3,10 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const constants = require('./constants');
 const sequelize = require('./models/index');
+
 require('./models/user');
 require('./models/post');
 require('./models/community');
-const PORT = constants.PORT;
 
 app.use(bodyParser.json());
 
@@ -46,7 +46,9 @@ const init = async () => {
         console.log('Database sync error');
         console.log(err);
     }
-    
+
+    const PORT = constants.PORT;
+
     app.listen(PORT, () => {
         console.log(`Server running on http://localhost:${PORT}`);
     });
