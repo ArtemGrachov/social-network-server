@@ -10,6 +10,7 @@ require('./models/community');
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
+const usersRoutes = require('./routes/users');
 
 const constants = require('./constants');
 const errors = require('./errors');
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use(authMiddleware);
 app.use('/auth', authRoutes);
 app.use('/posts', postsRoutes);
+app.use('/users', usersRoutes);
 
 app.use((err, req, res, next) => {
     console.log(err);

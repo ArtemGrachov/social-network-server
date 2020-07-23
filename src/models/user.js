@@ -64,4 +64,9 @@ User.prototype.getResetPasswordToken = function() {
     return resetPasswordToken;
 }
 
+User.prototype.serialize = function() {
+    const { firstname, lastname, country, city, phone, avatarURL, status } = this;
+    return { firstname, lastname, country, city, phone, avatarURL, status };
+}
+
 module.exports = User;

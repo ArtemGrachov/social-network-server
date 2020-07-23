@@ -28,7 +28,6 @@ module.exports = async (req, res, next) => {{
             }
     
             req.user = userInstance;
-            console.log('!!', req.user);
         }
     
         next();
