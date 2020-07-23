@@ -6,7 +6,7 @@ const success = require('../success');
 exports.postCreate = async (req, res, next) => {
     try {
         const { content } = req.body;
-        const { userId } = req;
+        const { user } = req;
         const validationErrors = [];
 
         if (!content) {
@@ -19,7 +19,7 @@ exports.postCreate = async (req, res, next) => {
 
         const postInstance = await Post.create({
             content,
-            UserId: userId
+            authorId: user.id
         });
 
         const post = postInstance.serialize();
@@ -43,7 +43,7 @@ exports.postUpdate = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        if (req.userId !== postInstance.UserId) {
+        if (req.user.id !== postInstance.authorId) {
             throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
 
