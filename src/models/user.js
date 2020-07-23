@@ -25,14 +25,16 @@ const User = sequelize.define('User', {
     phone: Sequelize.STRING,
     avatarURL: Sequelize.STRING,
     status: Sequelize.STRING
+}, {
+    tableName: 'users'
 });
 
 User.associate = models => {
-    User.hasMany(models.Post);
+    User.hasMany(models.Post, { foreignKey: 'authorId' });
 
     User.belongsToMany(
         models.Community,
-        { through: 'UsersCommunities' }
+        { through: 'usersCommunities', foreignKey: 'userId', otherKey: 'communityId' }
     );
 };
 

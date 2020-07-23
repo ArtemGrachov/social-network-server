@@ -6,11 +6,13 @@ const Post = sequelize.define('Post', {
         type: Sequelize.TEXT,
         allowNull: false
     }
+}, {
+    tableName: 'posts'
 });
 
 Post.associate = models => {
-    Post.belongsTo(models.User);
-    Post.belongsTo(models.Community)
+    Post.belongsTo(models.User, { foreignKey: 'authorId' });
+    Post.belongsTo(models.Community, { foreignKey: 'communityId' });
 }
 
 Post.prototype.serialize = function() {
@@ -18,7 +20,7 @@ Post.prototype.serialize = function() {
         id: this.id,
         content: this.content,
         createdAt: this.createdAt,
-        authorId: this.UserId
+        authorId: this.authorId
     }
 }
 
