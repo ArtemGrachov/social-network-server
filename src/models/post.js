@@ -13,4 +13,12 @@ Post.associate = models => {
     Post.belongsTo(models.Community)
 }
 
+Post.prototype.serialize = function() {
+    return {
+        content: this.content,
+        createdAt: this.createdAt,
+        authorId: this.userId
+    }
+}
+
 module.exports = Post;

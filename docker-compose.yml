@@ -33,8 +33,6 @@ services:
   database:
     container_name: seven_nineteen_database
     image: mysql
-    ports:
-      - "27017:27017"
     environment: 
       - MYSQL_ROOT_PASSWORD=qwerty
       - MYSQL_DATABASE=seven_nineteen_db
