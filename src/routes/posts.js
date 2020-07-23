@@ -7,4 +7,6 @@ router.post('', checkAuth, postsController.postCreate);
 
 router.patch('/:postId', checkAuth, postsController.postUpdate);
 
+router.delete('/:postId', checkAuth, postsController.postDelete);
+
 module.exports = router;

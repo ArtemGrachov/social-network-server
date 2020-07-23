@@ -64,3 +64,30 @@ exports.postUpdate = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.postDelete = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        const postInstance = await Post.findByPk(postId);
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        if (req.user.id !== postInstance.authorId) {
+            throw errorFactory(403, errors.NOT_AUTHORIZED);
+        }
+
+        await Post.destroy({ where: { id: postId }});
+
+        res
+            .status(200)
+            .json({
+                message: success.POST_DELETED_SUCCESSFULLY,
+                postId
+            });
+    } catch (err) {
+        next(err);
+    }
+}
