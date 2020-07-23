@@ -19,10 +19,8 @@ exports.postCreate = async (req, res, next) => {
 
         const postInstance = await Post.create({
             content,
-            author: userId
+            UserId: userId
         });
-
-        console.log(postInstance);
 
         const post = postInstance.serialize();
 
@@ -30,6 +28,36 @@ exports.postCreate = async (req, res, next) => {
             .status(201)
             .json({
                 message: success.POST_CREATED_SUCCESSFULLY,
+                post
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.postUpdate = async (req, res, next) => {
+    try {
+        const postInstance = await Post.findByPk(req.params.postId);
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        if (req.userId !== postInstance.UserId) {
+            throw errorFactory(403, errors.NOT_AUTHORIZED);
+        }
+
+        const { content } = req.body;
+
+        postInstance.content = content;
+        await postInstance.save();
+
+        const post = postInstance.serialize();
+
+        res
+            .status(200)
+            .json({
+                message: success.POST_UPDATED_SUCCESSFULLY,
                 post
             });
     } catch (err) {

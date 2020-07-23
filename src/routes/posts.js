@@ -5,4 +5,6 @@ const checkAuth = require('../middlewares/check-auth');
 
 router.post('', checkAuth, postsController.postCreate);
 
+router.patch('/:postId', checkAuth, postsController.postUpdate);
+
 module.exports = router;

@@ -15,9 +15,10 @@ Post.associate = models => {
 
 Post.prototype.serialize = function() {
     return {
+        id: this.id,
         content: this.content,
         createdAt: this.createdAt,
-        authorId: this.userId
+        authorId: this.UserId
     }
 }
 
