@@ -5,14 +5,14 @@ const bodyParser = require('body-parser');
 const sequelize = require('./models/index');
 require('./models/user');
 require('./models/post');
-require('./models/community');
+require('./models/comment');
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
 const usersRoutes = require('./routes/users');
 const userRoutes = require('./routes/user');
-const communitiesRoutes = require('./routes/communities');
+const commentsRoutes = require('./routes/comments');
 
 const constants = require('./constants');
 const errors = require('./errors');
@@ -31,7 +31,7 @@ app.use('/auth', authRoutes);
 app.use('/posts', postsRoutes);
 app.use('/users', usersRoutes);
 app.use('/user', userRoutes);
-app.use('/communities', communitiesRoutes)
+app.use('/comments', commentsRoutes);
 
 app.use((err, req, res, next) => {
     console.log(err);

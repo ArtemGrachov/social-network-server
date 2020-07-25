@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const errorFactory = require('../utils/error-factory');
+const paginationFactory = require('../utils/pagination-factory');
 const errors = require('../errors');
 const success = require('../success');
 
@@ -10,7 +11,7 @@ exports.postCreate = async (req, res, next) => {
         const validationErrors = [];
 
         if (!content) {
-            validationErrors.push(errors.POST_CONTENT_REQUIRED);
+            validationErrors.push(errors.CONTENT_REQUIRED);
         }
 
         if (validationErrors.length) {
@@ -48,6 +49,16 @@ exports.postUpdate = async (req, res, next) => {
         }
 
         const { content } = req.body;
+
+        const validationErrors = [];
+
+        if (!content) {
+            validationErrors.push(errors.CONTENT_REQUIRED);
+        }
+
+        if (validationErrors.length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
+        }
 
         postInstance.content = content;
         await postInstance.save();
@@ -132,6 +143,48 @@ exports.postDeleteLike = async (req, res, next) => {
             .json({
                 message: success.POST_UNLIKED_SUCCESSFULLY,
                 postId
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.postGetComments = async (req, res, next) => {
+    try {
+        let { page, count } = req.query;
+
+        if (!page) {
+            throw errorFactory(422, errors.PAGE_REQUIRED);
+        }
+
+        if (!count) {
+            throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
+        }
+
+        const postInstance = await Post.findByPk(req.params.postId);
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        page = +page;
+        count = +count;
+
+        const [total, commentsInstances] = await Promise.all([
+            postInstance.countComments(),
+            postInstance.getComments({
+                limit: page * count,
+                offset: (page - 1) * count
+            }),
+        ]);
+
+        const comments = commentsInstances.map(comment => comment.serialize());
+
+        res
+            .status(200)
+            .json({
+                comments,
+                pagination: paginationFactory(page, count, total)
             });
     } catch (err) {
         next(err);

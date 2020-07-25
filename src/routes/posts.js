@@ -13,4 +13,6 @@ router.post('/:postId/likes', checkAuth, postsController.postAddLike);
 
 router.delete('/:postId/likes', checkAuth, postsController.postDeleteLike);
 
+router.get('/:postId/comments', postsController.postGetComments);
+
 module.exports = router;

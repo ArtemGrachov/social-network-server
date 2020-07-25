@@ -64,6 +64,13 @@ User.associate = models => {
         otherKey: 'likedPostId',
         as: 'likedPost'
     });
+
+    User.hasMany(
+        models.Comment,
+        {
+            foreignKey: 'authorId',
+        }
+    );
 };
 
 User.prototype.getAuthTokens = function() {

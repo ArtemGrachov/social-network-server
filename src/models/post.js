@@ -19,6 +19,13 @@ Post.associate = models => {
         otherKey: 'likedUserId',
         as: 'likedUser'
     });
+
+    Post.hasMany(
+        models.Comment,
+        {
+            foreignKey: 'postId'
+        }
+    );
 }
 
 Post.prototype.serialize = function() {
