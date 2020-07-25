@@ -30,7 +30,7 @@ const User = sequelize.define('User', {
 });
 
 User.associate = models => {
-    User.hasMany(models.Post, { foreignKey: 'postId', as: 'post' });
+    User.hasMany(models.Post, { foreignKey: 'authorId', as: 'author' });
 
     User.belongsToMany(
         models.Community,
@@ -62,6 +62,13 @@ User.associate = models => {
             }
         }
     );
+
+    User.belongsToMany(models.Post, {
+        through: 'usersPostsLikes',
+        foreignKey: 'likedUserId',
+        otherKey: 'likedPostId',
+        as: 'likedPost'
+    });
 };
 
 User.prototype.getAuthTokens = function() {

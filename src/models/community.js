@@ -19,7 +19,7 @@ Community.associate = models => {
         { through: 'usersCommunities', foreignKey: 'communityId', otherKey: 'userId' }
     );
 
-    Community.hasMany(models.Post, { foreignKey: 'communityId' });
+    Community.hasMany(models.Post, { foreignKey: 'communityId', as: 'community' });
 }
 
 module.exports = Community;

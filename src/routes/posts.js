@@ -9,4 +9,8 @@ router.patch('/:postId', checkAuth, postsController.postUpdate);
 
 router.delete('/:postId', checkAuth, postsController.postDelete);
 
+router.post('/:postId/likes', checkAuth, postsController.postAddLike);
+
+router.delete('/:postId/likes', checkAuth, postsController.postDeleteLike);
+
 module.exports = router;

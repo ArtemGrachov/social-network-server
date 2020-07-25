@@ -91,3 +91,49 @@ exports.postDelete = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.postAddLike = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        const postInstance = await Post.findByPk(postId);
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        await postInstance.addLikedUser(req.user);
+
+        res
+            .status(200)
+            .json({
+                message: success.POST_LIKED_SUCCESSFULLY,
+                postId
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.postDeleteLike = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        const postInstance = await Post.findByPk(postId);
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        await postInstance.removeLikedUser(req.user);
+
+        res
+            .status(200)
+            .json({
+                message: success.POST_UNLIKED_SUCCESSFULLY,
+                postId
+            });
+    } catch (err) {
+        next(err);
+    }
+}

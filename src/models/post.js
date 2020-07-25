@@ -11,8 +11,15 @@ const Post = sequelize.define('Post', {
 });
 
 Post.associate = models => {
-    Post.belongsTo(models.User, { foreignKey: 'postId' });
-    Post.belongsTo(models.Community, { foreignKey: 'postId' });
+    Post.belongsTo(models.User, { foreignKey: 'authorId', as: 'author' });
+    Post.belongsTo(models.Community, { foreignKey: 'communityId', as: 'community' });
+
+    Post.belongsToMany(models.User, {
+        through: 'usersPostsLikes',
+        foreignKey: 'likedPostId',
+        otherKey: 'likedUserId',
+        as: 'likedUser'
+    });
 }
 
 Post.prototype.serialize = function() {
