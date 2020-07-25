@@ -5,4 +5,8 @@ const checkAuth = require('../middlewares/check-auth');
 
 router.post('', checkAuth, commentsController.commentCreate);
 
+router.patch('/:commentId', checkAuth, commentsController.commentUpdate);
+
+router.delete('/:commentId', checkAuth, commentsController.commentDelete);
+
 module.exports = router;
