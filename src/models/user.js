@@ -33,11 +33,6 @@ User.associate = models => {
     User.hasMany(models.Post, { foreignKey: 'authorId', as: 'author' });
 
     User.belongsToMany(
-        models.Community,
-        { through: 'usersCommunities', foreignKey: 'userId', otherKey: 'communityId' }
-    );
-
-    User.belongsToMany(
         models.User,
         {
             through: 'usersSubscriptions',
