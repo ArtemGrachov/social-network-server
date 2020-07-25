@@ -92,7 +92,7 @@ exports.userGetSubscriptions = async (req, res, next) => {
             }),
         ]);
 
-        const subscriptions = subscriptionInstances.map(user => user.serialize());
+        const subscriptions = subscriptionInstances.map(user => user.serializeMin());
 
         res
             .status(200)
@@ -135,7 +135,7 @@ exports.userGetSubscribers = async (req, res, next) => {
             }),
         ]);
 
-        const subscribers = subscribersInstances.map(user => user.serialize());
+        const subscribers = subscribersInstances.map(user => user.serializeMin());
 
         res
             .status(200)
