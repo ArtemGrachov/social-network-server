@@ -30,11 +30,31 @@ const User = sequelize.define('User', {
 });
 
 User.associate = models => {
-    User.hasMany(models.Post, { foreignKey: 'authorId' });
+    User.hasMany(models.Post, { foreignKey: 'postId', as: 'post' });
 
     User.belongsToMany(
         models.Community,
         { through: 'usersCommunities', foreignKey: 'userId', otherKey: 'communityId' }
+    );
+
+    User.belongsToMany(
+        models.User,
+        {
+            through: 'usersSubscription',
+            foreignKey: 'subscriptionId',
+            otherKey: 'subscriberId',
+            as: 'subscription'
+        }
+    );
+
+    User.belongsToMany(
+        models.User,
+        {
+            through: 'usersSubscription',
+            foreignKey: 'subscriberId',
+            otherKey: 'subscriptionId',
+            as: 'subscriber'
+        }
     );
 };
 
