@@ -40,20 +40,26 @@ User.associate = models => {
     User.belongsToMany(
         models.User,
         {
-            through: 'usersSubscription',
+            through: 'usersSubscriptions',
             foreignKey: 'subscriptionId',
             otherKey: 'subscriberId',
-            as: 'subscription'
+            as: {
+                singular: 'subscriber',
+                plural: 'subscribers'
+            }
         }
     );
 
     User.belongsToMany(
         models.User,
         {
-            through: 'usersSubscription',
+            through: 'usersSubscriptions',
             foreignKey: 'subscriberId',
             otherKey: 'subscriptionId',
-            as: 'subscriber'
+            as: {
+                singular: 'subscription',
+                plural:  'subscriptions'
+            }
         }
     );
 };

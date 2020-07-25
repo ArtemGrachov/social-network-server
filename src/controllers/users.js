@@ -60,3 +60,89 @@ exports.userGetPosts = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.userGetSubscriptions = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        let { page, count } = req.query;
+
+        if (!page) {
+            throw errorFactory(422, errors.PAGE_REQUIRED);
+        }
+
+        if (!count) {
+            throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
+        }
+
+        page = +page;
+        count = +count;
+
+        const userInstance = await User.findByPk(userId);
+
+        if (!userInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const [total, subscriptionInstances] = await Promise.all([
+            userInstance.countSubscriptions(),
+            userInstance.getSubscriptions({
+                limit: page * count,
+                offset: (page - 1) * count
+            }),
+        ]);
+
+        const subscriptions = subscriptionInstances.map(user => user.serialize());
+
+        res
+            .status(200)
+            .json({
+                subscriptions,
+                pagination: paginationFactory(page, count, total)
+            })
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.userGetSubscribers = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        let { page, count } = req.query;
+
+        if (!page) {
+            throw errorFactory(422, errors.PAGE_REQUIRED);
+        }
+
+        if (!count) {
+            throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
+        }
+
+        page = +page;
+        count = +count;
+
+        const userInstance = await User.findByPk(userId);
+
+        if (!userInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const [total, subscribersInstances] = await Promise.all([
+            userInstance.countSubscribers(),
+            userInstance.getSubscribers({
+                limit: page * count,
+                offset: (page - 1) * count
+            }),
+        ]);
+
+        const subscribers = subscribersInstances.map(user => user.serialize());
+
+        res
+            .status(200)
+            .json({
+                subscribers,
+                pagination: paginationFactory(page, count, total)
+            });
+    } catch (err) {
+        next(err);
+    }
+}
