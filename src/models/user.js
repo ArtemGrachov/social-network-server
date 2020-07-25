@@ -104,4 +104,9 @@ User.prototype.serialize = function() {
     return { firstname, lastname, country, city, phone, avatarURL, status };
 }
 
+User.prototype.serializeMin = function() {
+    const { firstname, lastname, avatarURL } = this;
+    return { firstname, lastname, avatarURL };
+}
+
 module.exports = User;

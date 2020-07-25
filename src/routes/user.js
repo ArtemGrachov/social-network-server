@@ -9,4 +9,6 @@ router.post('/subscriptions/users', checkAuth, userController.userSubscribeTo);
 
 router.delete('/subscriptions/users/:subscriptionId', checkAuth, userController.userUnsubscribeFrom);
 
+router.get('/news', checkAuth, userController.userGetNews);
+
 module.exports = router;

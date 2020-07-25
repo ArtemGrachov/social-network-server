@@ -1,5 +1,7 @@
 const User = require('../models/user');
+const Post = require('../models/post');
 const errorFactory = require('../utils/error-factory');
+const paginationFactory = require('../utils/pagination-factory');
 const errors = require('../errors');
 const success = require('../success');
 
@@ -94,6 +96,55 @@ exports.userUnsubscribeFrom = async (req, res, next) => {
             .status(200)
             .json({
                 message: success.SUBSCRIPTION_REMOVED_SUCCESSFULLY
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.userGetNews = async (req, res, next) => {
+    try {
+        const { user } = req;
+
+        let { page, count } = req.query;
+
+        page = +page;
+        count = +count;
+
+        if (!page) {
+            throw errorFactory(422, errors.PAGE_REQUIRED);
+        }
+
+        if (!count) {
+            throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
+        }
+
+        const subscriptions = await user.getSubscriptions();
+        const subscriptionIds = subscriptions.map(s => s.id);
+
+        const { rows, count: total } = await Post.findAndCountAll({
+            where: {
+                authorId: [...subscriptionIds, user.id]
+            },
+            limit: page * count,
+            offset: (page - 1) * count
+        });
+
+        const posts = rows.map(post => post.serialize());
+        const postsAuthors = new Set(rows.map(post => post.authorId));
+
+        const authorsInstances = [...subscriptions, user].filter(user => {
+            return postsAuthors.has(user.id);
+        });
+
+        const authors = authorsInstances.map(author => author.serializeMin());
+
+        res
+            .status(200)
+            .json({
+                posts,
+                authors,
+                pagination: paginationFactory(page, count, total)
             });
     } catch (err) {
         next(err);
