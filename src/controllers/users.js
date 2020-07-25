@@ -45,7 +45,8 @@ exports.userGetPosts = async (req, res, next) => {
                 authorId: userId
             },
             limit: page * count,
-            offset: (page - 1) * count
+            offset: (page - 1) * count,
+            order: [['createdAt', 'DESC']]
         });
 
         const posts = postsInstances.rows.map(post => post.serialize());

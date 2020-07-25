@@ -127,7 +127,8 @@ exports.userGetNews = async (req, res, next) => {
                 authorId: [...subscriptionIds, user.id]
             },
             limit: page * count,
-            offset: (page - 1) * count
+            offset: (page - 1) * count,
+            order: [['createdAt', 'DESC']]
         });
 
         const posts = rows.map(post => post.serialize());
