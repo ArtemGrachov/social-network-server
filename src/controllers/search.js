@@ -9,7 +9,6 @@ const paginationFactory = require('../utils/pagination-factory');
 const textSearchQuery = require('../utils/text-search-query');
 const errors = require('../errors');
 
-
 const format = /(?!^%+$)^.+$/;
 
 exports.searchUser = async (req, res, next) => {

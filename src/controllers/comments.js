@@ -11,7 +11,7 @@ exports.commentCreate = async (req, res, next) => {
         const validationErrors = [];
 
         if (!content) {
-            validationErrors.push({ field: 'content', error: errors.CONTENT_REQUIRED });
+            validationErrors.push({ field: 'content', error: errors.REQUIRED });
         }
 
         if (validationErrors.length) {
@@ -80,7 +80,7 @@ exports.commentUpdate = async (req, res, next) => {
         const validationErrors = [];
 
         if (!content) {
-            validationErrors.push({ field: 'content', error: errors.CONTENT_REQUIRED });
+            validationErrors.push({ field: 'content', error: errors.REQUIRED });
         }
 
         if (validationErrors.length) {

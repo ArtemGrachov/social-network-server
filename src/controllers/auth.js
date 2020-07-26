@@ -24,19 +24,19 @@ exports.registration = async (req, res, next) => {
 
         if (email) {
             if (!validator.isEmail(email)) {
-                validationErrors.push({ field: 'email', error: errors.INVALID_EMAIL });
+                validationErrors.push({ field: 'email', error: errors.INVALID_FORMAT });
             }
         } else {
-            validationErrors.push({ field: 'email', error: errors.EMAIL_REQUIRED });
+            validationErrors.push({ field: 'email', error: errors.REQUIRED });
         }
 
         if (password) {
             const passwordValidation = { min: 8, max: 18 }
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_PASSWORD, data: passwordValidation });
+                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.PASSWORD_REQUIRED });
+            validationErrors.push({ field: 'password', error: errors.REQUIRED });
         }
 
         if (password !== passwordConfirmation) {
@@ -45,11 +45,11 @@ exports.registration = async (req, res, next) => {
         }
 
         if (!firstname) {
-            validationErrors.push({ field: 'firstname', error: errors.FIRSTNAME_REQUIRED });
+            validationErrors.push({ field: 'firstname', error: errors.REQUIRED });
         }
 
         if (!lastname) {
-            validationErrors.push({ field: 'lastname', error: errors.LASTNAME_REQUIRED });
+            validationErrors.push({ field: 'lastname', error: errors.REQUIRED });
         }
 
         if (validationErrors.length) {
@@ -147,10 +147,10 @@ exports.changePassword = async (req, res, next) => {
         if (password) {
             const passwordValidation = { min: 8, max: 18 }
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_PASSWORD, data: passwordValidation });
+                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.PASSWORD_REQUIRED });
+            validationErrors.push({ field: 'password', error: errors.REQUIRED });
         }
 
         if (password !== passwordConfirmation) {
@@ -187,7 +187,7 @@ exports.generateResetPasswordToken = async (req, res, next) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            throw errorFactory(422, errors.INVALID_EMAIL);
+            throw errorFactory(422, errors.INVALID_FORMAT);
         }
         const resetPasswordToken = user.getResetPasswordToken();
 
