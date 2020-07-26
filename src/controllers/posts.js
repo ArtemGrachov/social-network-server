@@ -11,7 +11,7 @@ exports.postCreate = async (req, res, next) => {
         const validationErrors = [];
 
         if (!content) {
-            validationErrors.push(errors.CONTENT_REQUIRED);
+            validationErrors.push({ field: 'content', error: errors.CONTENT_REQUIRED });
         }
 
         if (validationErrors.length) {
@@ -53,7 +53,7 @@ exports.postUpdate = async (req, res, next) => {
         const validationErrors = [];
 
         if (!content) {
-            validationErrors.push(errors.CONTENT_REQUIRED);
+            validationErrors.push({ field: 'content', error: errors.CONTENT_REQUIRED });
         }
 
         if (validationErrors.length) {

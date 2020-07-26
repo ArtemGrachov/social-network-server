@@ -24,30 +24,32 @@ exports.registration = async (req, res, next) => {
 
         if (email) {
             if (!validator.isEmail(email)) {
-                validationErrors.push(errors.INVALID_EMAIL);
+                validationErrors.push({ field: 'email', error: errors.INVALID_EMAIL });
             }
         } else {
-            validationErrors.push(errors.EMAIL_REQUIRED);
+            validationErrors.push({ field: 'email', error: errors.EMAIL_REQUIRED });
         }
 
         if (password) {
-            if (!validator.isLength(password, { min: 8, max: 18 })) {
-                validationErrors.push(errors.INVALID_PASSWORD);
+            const passwordValidation = { min: 8, max: 18 }
+            if (!validator.isLength(password, passwordValidation)) {
+                validationErrors.push({ field: 'password', error: errors.INVALID_PASSWORD, data: passwordValidation });
             };
         } else {
-            validationErrors.push(errors.PASSWORD_REQUIRED);
+            validationErrors.push({ field: 'password', error: errors.PASSWORD_REQUIRED });
         }
 
         if (password !== passwordConfirmation) {
-            validationErrors.push(errors.PASSWORDS_ARE_NOT_EQUAL);
+            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
         }
 
         if (!firstname) {
-            validationErrors.push(errors.FIRSTNAME_REQUIRED);
+            validationErrors.push({ field: 'firstname', error: errors.FIRSTNAME_REQUIRED });
         }
 
         if (!lastname) {
-            validationErrors.push(errors.LASTNAME_REQUIRED);
+            validationErrors.push({ field: 'lastname', error: errors.LASTNAME_REQUIRED });
         }
 
         if (validationErrors.length) {
@@ -142,18 +144,18 @@ exports.changePassword = async (req, res, next) => {
         const password = req.body.password;
         const passwordConfirmation = req.body.passwordConfirmation;
 
-        if (!password || !passwordConfirmation) {
-            throw errorFactory(422, errors.INVALID_INPUT);
-        }
-
-        const validationErrors = [];
-
-        if (!validator.isLength(password, { min: 8, max: 18 })) {
-            validationErrors.push(errors.INVALID_PASSWORD);
+        if (password) {
+            const passwordValidation = { min: 8, max: 18 }
+            if (!validator.isLength(password, passwordValidation)) {
+                validationErrors.push({ field: 'password', error: errors.INVALID_PASSWORD, data: passwordValidation });
+            };
+        } else {
+            validationErrors.push({ field: 'password', error: errors.PASSWORD_REQUIRED });
         }
 
         if (password !== passwordConfirmation) {
-            validationErrors.push(errors.PASSWORDS_ARE_NOT_EQUAL);
+            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
         }
 
         if (validationErrors.length) {
