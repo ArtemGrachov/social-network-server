@@ -26,7 +26,10 @@ const User = sequelize.define('User', {
     avatarURL: Sequelize.STRING,
     status: Sequelize.STRING
 }, {
-    tableName: 'users'
+    tableName: 'users',
+    indexes: [
+        { type: 'FULLTEXT', name: 'text_idx', fields: ['firstname'] }
+    ]
 });
 
 User.associate = models => {
