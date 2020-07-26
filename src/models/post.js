@@ -1,10 +1,31 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./');
+const htmlToText = require('html-to-text');
 
 const Post = sequelize.define('Post', {
     content: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: false,
+        set(value) {
+            this.setDataValue('content', value);
+            this.setDataValue(
+                'textContent',
+                htmlToText.fromString(value, {
+                    wordwrap: false,
+                    noLinkBrackets: true,
+                    ignoreHref: true,
+                    ignoreImage: true,
+                    uppercaseHeadings: false
+                })
+            );
+        }
+    },
+    textContent: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+        set() {
+            throw new Error(`'textContent' column can not be set directly. Change 'content' column instead.`)
+        }
     }
 }, {
     tableName: 'posts'
