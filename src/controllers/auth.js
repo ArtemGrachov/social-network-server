@@ -31,7 +31,7 @@ exports.registration = async (req, res, next) => {
         }
 
         if (password) {
-            const passwordValidation = { min: 8, max: 18 }
+            const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
                 validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
             };
@@ -86,6 +86,29 @@ exports.registration = async (req, res, next) => {
 exports.logIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+
+        const validationErrors = [];
+
+        if (email) {
+            if (!validator.isEmail(email)) {
+                validationErrors.push({ field: 'email', error: errors.INVALID_FORMAT });
+            }
+        } else {
+            validationErrors.push({ field: 'email', error: errors.REQUIRED });
+        }
+
+        if (password) {
+            const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
+            if (!validator.isLength(password, passwordValidation)) {
+                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+            };
+        } else {
+            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+        }
+
+        if (validationErrors.length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
+        }
 
         const user = await User.findOne({
             where: {
@@ -143,9 +166,10 @@ exports.changePassword = async (req, res, next) => {
     try {
         const password = req.body.password;
         const passwordConfirmation = req.body.passwordConfirmation;
+        const validationErrors = [];
 
         if (password) {
-            const passwordValidation = { min: 8, max: 18 }
+            const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
                 validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
             };
@@ -228,9 +252,24 @@ exports.resetPassword = async (req, res, next) => {
         if (!user) {
             throw errorFactory(401, errors.INVALID_RESET_PASSWORD_TOKEN);
         }
+        const validationErrors = [];
+
+        if (password) {
+            const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
+            if (!validator.isLength(password, passwordValidation)) {
+                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+            };
+        } else {
+            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+        }
 
         if (password !== passwordConfirmation) {
-            throw errorFactory(422, errors.PASSWORDS_ARE_NOT_EQUAL);
+            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+        }
+
+        if (validationErrors.length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
         const passwordHash = await bcrypt.hash(password, 12);
