@@ -126,7 +126,7 @@ exports.userGetNews = async (req, res, next) => {
             where: {
                 authorId: [...subscriptionIds, user.id]
             },
-            limit: page * count,
+            limit: count,
             offset: (page - 1) * count,
             order: [['createdAt', 'DESC']]
         });

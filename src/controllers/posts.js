@@ -173,7 +173,7 @@ exports.postGetComments = async (req, res, next) => {
         const [total, commentsInstances] = await Promise.all([
             postInstance.countComments(),
             postInstance.getComments({
-                limit: page * count,
+                limit: count,
                 offset: (page - 1) * count
             }),
         ]);

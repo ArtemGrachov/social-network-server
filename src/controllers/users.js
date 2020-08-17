@@ -44,7 +44,7 @@ exports.userGetPosts = async (req, res, next) => {
             where: {
                 authorId: userId
             },
-            limit: page * count,
+            limit: count,
             offset: (page - 1) * count,
             order: [['createdAt', 'DESC']]
         });
@@ -87,7 +87,7 @@ exports.userGetSubscriptions = async (req, res, next) => {
         const [total, subscriptionInstances] = await Promise.all([
             userInstance.countSubscriptions(),
             userInstance.getSubscriptions({
-                limit: page * count,
+                limit: count,
                 offset: (page - 1) * count
             }),
         ]);
@@ -130,7 +130,7 @@ exports.userGetSubscribers = async (req, res, next) => {
         const [total, subscribersInstances] = await Promise.all([
             userInstance.countSubscribers(),
             userInstance.getSubscribers({
-                limit: page * count,
+                limit: count,
                 offset: (page - 1) * count
             }),
         ]);

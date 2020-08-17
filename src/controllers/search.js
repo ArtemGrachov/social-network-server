@@ -85,7 +85,7 @@ exports.searchUser = async (req, res, next) => {
             where: {
                 [Sequelize.Op.and]: queries
             },
-            limit: page * count,
+            limit: count,
             offset: (page - 1) * count
         });
 
@@ -146,7 +146,7 @@ exports.searchPost = async (req, res, next) => {
 
         const { rows, count: total } = await Post.findAndCountAll({
             where: textSearchQuery('textContent', content),
-            limit: page * count,
+            limit: count,
             offset: (page - 1) * count
         });
 
