@@ -103,13 +103,13 @@ User.prototype.getResetPasswordToken = function() {
 }
 
 User.prototype.serialize = function() {
-    const { firstname, lastname, country, city, phone, avatarURL, status } = this;
-    return { firstname, lastname, country, city, phone, avatarURL, status };
+    const { id, firstname, lastname, country, city, phone, avatarURL, status } = this;
+    return { id, firstname, lastname, country, city, phone, avatarURL, status };
 }
 
 User.prototype.serializeMin = function() {
-    const { firstname, lastname, avatarURL } = this;
-    return { firstname, lastname, avatarURL };
+    const { id, firstname, lastname, avatarURL } = this;
+    return { id, firstname, lastname, avatarURL };
 }
 
 module.exports = User;
