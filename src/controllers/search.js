@@ -89,7 +89,7 @@ exports.searchUser = async (req, res, next) => {
             offset: (page - 1) * count
         });
 
-        const users = rows.map(user => user.serializeMin());
+        const users = await Promise.all(rows.map(user => user.serializeMin(req.user)));
 
         res
             .status(200)
@@ -157,7 +157,7 @@ exports.searchPost = async (req, res, next) => {
             where: { id: Array.from(postsAuthors) }
         });
 
-        const authors = authorsInstances.map(author => author.serializeMin());
+        const authors = await Promise.all(authorsInstances.map(author => author.serializeMin(req.user)));
 
         res
             .status(200)

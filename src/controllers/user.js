@@ -138,7 +138,7 @@ exports.userGetNews = async (req, res, next) => {
             return postsAuthors.has(user.id);
         });
 
-        const authors = authorsInstances.map(author => author.serializeMin());
+        const authors = await Promise.all(authorsInstances.map(author => author.serializeMin(req.user)));
 
         res
             .status(200)

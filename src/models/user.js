@@ -102,14 +102,36 @@ User.prototype.getResetPasswordToken = function() {
     return resetPasswordToken;
 }
 
-User.prototype.serialize = function() {
+User.prototype.serialize = async function(userInstance) {
     const { id, firstname, lastname, country, city, phone, avatarURL, status } = this;
-    return { id, firstname, lastname, country, city, phone, avatarURL, status };
+    const result = { id, firstname, lastname, country, city, phone, avatarURL, status };
+
+    if (!userInstance) {
+        return result;
+    }
+
+    const isSubscription = await userInstance.hasSubscription(this);
+
+    return {
+        ...result,
+        isSubscription
+    };
 }
 
-User.prototype.serializeMin = function() {
+User.prototype.serializeMin = async function(userInstance) {
     const { id, firstname, lastname, avatarURL } = this;
-    return { id, firstname, lastname, avatarURL };
+    const result = { id, firstname, lastname, avatarURL };
+
+    if (!userInstance) {
+        return result;
+    }
+
+    const isSubscription = await userInstance.hasSubscription(this);
+
+    return {
+        ...result,
+        isSubscription
+    };
 }
 
 module.exports = User;
