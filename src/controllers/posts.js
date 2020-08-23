@@ -78,7 +78,8 @@ exports.postUpdate = async (req, res, next) => {
 
 exports.postDelete = async (req, res, next) => {
     try {
-        const { postId } = req.params;
+        let { postId } = req.params;
+        postId = +postId;
 
         const postInstance = await Post.findByPk(postId);
 
@@ -119,7 +120,7 @@ exports.postAddLike = async (req, res, next) => {
             .status(200)
             .json({
                 message: success.POST_LIKED_SUCCESSFULLY,
-                postId
+                postId: postInstance.id
             });
     } catch (err) {
         next(err);
@@ -142,7 +143,7 @@ exports.postDeleteLike = async (req, res, next) => {
             .status(200)
             .json({
                 message: success.POST_UNLIKED_SUCCESSFULLY,
-                postId
+                postId: postInstance.id
             });
     } catch (err) {
         next(err);

@@ -152,10 +152,18 @@ exports.searchPost = async (req, res, next) => {
 
         const posts = rows.map(post => post.serialize());
 
+        const postsAuthors = new Set(rows.map(post => post.authorId));
+        const authorsInstances = await User.findAll({
+            where: { id: Array.from(postsAuthors) }
+        });
+
+        const authors = authorsInstances.map(author => author.serializeMin());
+
         res
             .status(200)
             .json({
                 posts,
+                authors,
                 pagination: paginationFactory(page, count, total)
             });
     } catch (err) {
