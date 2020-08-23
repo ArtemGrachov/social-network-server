@@ -23,7 +23,7 @@ exports.postCreate = async (req, res, next) => {
             authorId: user.id
         });
 
-        const post = postInstance.serialize();
+        const post = await postInstance.serialize(req.user);
 
         res
             .status(201)
@@ -63,7 +63,7 @@ exports.postUpdate = async (req, res, next) => {
         postInstance.content = content;
         await postInstance.save();
 
-        const post = postInstance.serialize();
+        const post = await postInstance.serialize(req.user);
 
         res
             .status(200)

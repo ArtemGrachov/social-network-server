@@ -49,7 +49,7 @@ exports.userGetPosts = async (req, res, next) => {
             order: [['createdAt', 'DESC']]
         });
 
-        const posts = postsInstances.rows.map(post => post.serialize());
+        const posts = await Promise.all(postsInstances.rows.map(post => post.serialize(req.user)));
 
         res
             .status(200)

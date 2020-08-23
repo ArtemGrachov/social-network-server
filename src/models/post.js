@@ -49,13 +49,24 @@ Post.associate = models => {
     );
 }
 
-Post.prototype.serialize = function() {
-    return {
+Post.prototype.serialize = async function(userInstance) {
+    const result = {
         id: this.id,
         content: this.content,
         createdAt: this.createdAt,
         authorId: this.authorId
     }
+
+    if (!userInstance) {
+        return result;
+    }
+
+    const liked = await userInstance.hasLikedPost(this);
+
+    return {
+        ...result,
+        liked
+    };
 }
 
 module.exports = Post;

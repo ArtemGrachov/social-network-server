@@ -131,7 +131,7 @@ exports.userGetNews = async (req, res, next) => {
             order: [['createdAt', 'DESC']]
         });
 
-        const posts = rows.map(post => post.serialize());
+        const posts = await Promise.all(rows.map(post => post.serialize(req.user)));
         const postsAuthors = new Set(rows.map(post => post.authorId));
 
         const authorsInstances = [...subscriptions, user].filter(user => {

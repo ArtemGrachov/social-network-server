@@ -150,7 +150,7 @@ exports.searchPost = async (req, res, next) => {
             offset: (page - 1) * count
         });
 
-        const posts = rows.map(post => post.serialize());
+        const posts = await Promise.all(rows.map(post => post.serialize(req.user)));
 
         const postsAuthors = new Set(rows.map(post => post.authorId));
         const authorsInstances = await User.findAll({
