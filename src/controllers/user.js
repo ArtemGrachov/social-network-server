@@ -77,7 +77,7 @@ exports.userSubscribeTo = async (req, res, next) => {
             .status(200)
             .json({
                 message: success.SUBSCRIPTION_ADDED_SUCCESSFULLY,
-                subscriptionId
+                subscriptionId: subscription.id
             });
     } catch (err) {
         next(err);
@@ -88,14 +88,15 @@ exports.userUnsubscribeFrom = async (req, res, next) => {
     try {
         const { subscriptionId } = req.params;
 
-        const sub = await User.findByPk(subscriptionId);
+        const subscription = await User.findByPk(subscriptionId);
 
-        await req.user.removeSubscription(sub);
+        await req.user.removeSubscription(subscription);
 
         res
             .status(200)
             .json({
-                message: success.SUBSCRIPTION_REMOVED_SUCCESSFULLY
+                message: success.SUBSCRIPTION_REMOVED_SUCCESSFULLY,
+                subscriptionId: subscription.id
             });
     } catch (err) {
         next(err);

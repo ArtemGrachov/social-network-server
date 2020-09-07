@@ -84,7 +84,7 @@ exports.userGetSubscriptions = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        const [total, subscriptionInstances] = await Promise.all([
+        const [total, usersInstances] = await Promise.all([
             userInstance.countSubscriptions(),
             userInstance.getSubscriptions({
                 limit: count,
@@ -92,12 +92,12 @@ exports.userGetSubscriptions = async (req, res, next) => {
             }),
         ]);
 
-        const subscriptions = subscriptionInstances.map(user => user.serializeMin());
+        const users = await Promise.all(usersInstances.map(user => user.serializeMin(req.user)));
 
         res
             .status(200)
             .json({
-                subscriptions,
+                users,
                 pagination: paginationFactory(page, count, total)
             })
     } catch (err) {
@@ -127,7 +127,7 @@ exports.userGetSubscribers = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        const [total, subscribersInstances] = await Promise.all([
+        const [total, usersInstances] = await Promise.all([
             userInstance.countSubscribers(),
             userInstance.getSubscribers({
                 limit: count,
@@ -135,12 +135,12 @@ exports.userGetSubscribers = async (req, res, next) => {
             }),
         ]);
 
-        const subscribers = subscribersInstances.map(user => user.serializeMin());
+        const users = await Promise.all(usersInstances.map(user => user.serializeMin(req.user)));
 
         res
             .status(200)
             .json({
-                subscribers,
+                users,
                 pagination: paginationFactory(page, count, total)
             });
     } catch (err) {
