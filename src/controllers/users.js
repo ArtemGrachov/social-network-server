@@ -14,7 +14,7 @@ exports.userGet = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        const user = userInstance.serialize();
+        const user = await userInstance.serialize();
 
         res
             .status(200)
