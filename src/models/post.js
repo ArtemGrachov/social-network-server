@@ -57,6 +57,8 @@ Post.prototype.serialize = async function(userInstance) {
         authorId: this.authorId
     }
 
+    const commentsCount = await this.countComments();
+
     if (!userInstance) {
         return result;
     }
@@ -65,7 +67,8 @@ Post.prototype.serialize = async function(userInstance) {
 
     return {
         ...result,
-        liked
+        liked,
+        commentsCount
     };
 }
 
