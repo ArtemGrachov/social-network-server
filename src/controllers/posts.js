@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 const errorFactory = require('../utils/error-factory');
 const paginationFactory = require('../utils/pagination-factory');
 const errors = require('../errors');
@@ -180,11 +181,18 @@ exports.postGetComments = async (req, res, next) => {
         ]);
 
         const comments = commentsInstances.map(comment => comment.serialize());
+        const commentsAuthors = new Set(commentsInstances.map(comment => comment.authorId));
+        const authorsInstances = await User.findAll({
+            where: { id: Array.from(commentsAuthors) }
+        });
+
+        const authors = await Promise.all(authorsInstances.map(author => author.serializeMin(req.user)));
 
         res
             .status(200)
             .json({
                 comments,
+                authors,
                 pagination: paginationFactory(page, count, total)
             });
     } catch (err) {
