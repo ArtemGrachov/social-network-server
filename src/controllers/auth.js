@@ -188,11 +188,9 @@ exports.changePassword = async (req, res, next) => {
 
         const passwordHash = await bcrypt.hash(password, 12);
 
-        const user = await User.findByPk(req.userId);
+        req.user.password = passwordHash;
 
-        user.password = passwordHash;
-
-        await user.save();
+        await req.user.save();
 
         res
             .status(200)
