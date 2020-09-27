@@ -74,6 +74,13 @@ User.associate = models => {
             foreignKey: 'authorId',
         }
     );
+
+    User.belongsToMany(models.Comment, {
+        through: 'usersCommentsLikes',
+        foreignKey: 'likedUserId',
+        otherKey: 'likedCommentId',
+        as: 'likedComment'
+    });
 };
 
 User.prototype.getAuthTokens = function() {

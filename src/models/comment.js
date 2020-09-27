@@ -30,12 +30,30 @@ Comment.associate = models => {
             as: 'answer'
         }
     );
+
+    Comment.belongsToMany(models.User, {
+        through: 'usersCommentsLikes',
+        foreignKey: 'likedCommentId',
+        otherKey: 'likedUserId',
+        as: 'likedUser'
+    });
 };
 
-Comment.prototype.serialize = function() {
+Comment.prototype.serialize = async function(userInstance) {
     const { id, content, postId, authorId, referenceId } = this;
 
-    return { id, content, postId, authorId, referenceId };
+    const result = { id, content, postId, authorId, referenceId };
+
+    if (!userInstance) {
+        return result;
+    }
+
+    const liked = await userInstance.hasLikedComment(this);
+
+    return {
+        ...result,
+        liked
+    };
 }
 
 module.exports = Comment;

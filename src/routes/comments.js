@@ -9,4 +9,8 @@ router.patch('/:commentId', checkAuth, commentsController.commentUpdate);
 
 router.delete('/:commentId', checkAuth, commentsController.commentDelete);
 
+router.post('/:commentId/likes', checkAuth, commentsController.commentAddLike);
+
+router.delete('/:commentId/likes', checkAuth, commentsController.commentDeleteLike);
+
 module.exports = router;

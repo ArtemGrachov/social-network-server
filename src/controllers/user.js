@@ -47,7 +47,7 @@ exports.userUpdate = async (req, res, next) => {
 
         await userInstance.save();
 
-        const user = await userInstance.serialize();
+        const user = await userInstance.serialize(req.user);
 
         res
             .status(200)

@@ -50,7 +50,7 @@ exports.commentCreate = async (req, res, next) => {
 
         await commentInstance.save();
 
-        const comment = commentInstance.serialize();
+        const comment = await commentInstance.serialize(req.user);
 
         res
             .status(201)
@@ -90,7 +90,7 @@ exports.commentUpdate = async (req, res, next) => {
         commentInstance.content = content;
         await commentInstance.save();
 
-        const comment = commentInstance.serialize();
+        const comment = await commentInstance.serialize(req.user);
 
         res
             .status(200)
@@ -124,6 +124,52 @@ exports.commentDelete = async (req, res, next) => {
             .json({
                 message: success.COMMENT_DELETED_SUCCESSFULLY,
                 commentId: commentId
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.commentAddLike = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+
+        const commentInstance = await Comment.findByPk(commentId);
+
+        if (!commentInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        await commentInstance.addLikedUser(req.user);
+
+        res
+            .status(200)
+            .json({
+                message: success.COMMENT_LIKED_SUCCESSFULLY,
+                commentId: commentInstance.id
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.commentDeleteLike = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+
+        const commentInstance = await Comment.findByPk(commentId);
+
+        if (!commentInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        await commentInstance.removeLikedUser(req.user);
+
+        res
+            .status(200)
+            .json({
+                message: success.COMMENT_UNLIKED_SUCCESSFULLY,
+                commentId: commentInstance.id
             });
     } catch (err) {
         next(err);

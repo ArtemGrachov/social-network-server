@@ -180,7 +180,7 @@ exports.postGetComments = async (req, res, next) => {
             }),
         ]);
 
-        const comments = commentsInstances.map(comment => comment.serialize());
+        const comments = await Promise.all(commentsInstances.map(comment => comment.serialize(req.user)));
         const commentsAuthors = new Set(commentsInstances.map(comment => comment.authorId));
         const authorsInstances = await User.findAll({
             where: { id: Array.from(commentsAuthors) }
