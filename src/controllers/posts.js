@@ -176,7 +176,8 @@ exports.postGetComments = async (req, res, next) => {
             postInstance.countComments(),
             postInstance.getComments({
                 limit: count,
-                offset: (page - 1) * count
+                offset: (page - 1) * count,
+                order: [['createdAt', 'DESC']]
             }),
         ]);
 
