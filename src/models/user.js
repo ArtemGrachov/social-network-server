@@ -126,8 +126,8 @@ User.prototype.serialize = async function(userInstance) {
 }
 
 User.prototype.serializeMin = async function(userInstance) {
-    const { id, firstname, lastname, avatarURL } = this;
-    const result = { id, firstname, lastname, avatarURL };
+    const { id, firstname, lastname, avatarURL, country, city } = this;
+    const result = { id, firstname, lastname, avatarURL, country, city };
 
     if (!userInstance) {
         return result;
