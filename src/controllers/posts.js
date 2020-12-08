@@ -9,13 +9,13 @@ exports.postCreate = async (req, res, next) => {
     try {
         const { content } = req.body;
         const { user } = req;
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (!content) {
-            validationErrors.push({ field: 'content', error: errors.REQUIRED });
+            validationErrors.content = [{ error: errors.REQUIRED }];
         }
 
-        if (validationErrors.length) {
+        if (Object.keys(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
@@ -51,13 +51,13 @@ exports.postUpdate = async (req, res, next) => {
 
         const { content } = req.body;
 
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (!content) {
-            validationErrors.push({ field: 'content', error: errors.REQUIRED });
+            validationErrors.content = [{ error: errors.REQUIRED }];
         }
 
-        if (validationErrors.length) {
+        if (Object.keys(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 

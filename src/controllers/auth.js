@@ -20,39 +20,47 @@ exports.registration = async (req, res, next) => {
             lastname
         } = req.body;
 
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (email) {
             if (!validator.isEmail(email)) {
-                validationErrors.push({ field: 'email', error: errors.INVALID_FORMAT });
+                validationErrors.email = [{ error: errors.INVALID_FORMAT }];
             }
         } else {
-            validationErrors.push({ field: 'email', error: errors.REQUIRED });
+            validationErrors.email = [{ field: 'email', error: errors.REQUIRED }];
         }
 
         if (password) {
             const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+                validationErrors.password = [{ error: errors.INVALID_FORMAT, data: passwordValidation }];
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+            validationErrors.password = [{ error: errors.REQUIRED }];
         }
 
         if (password !== passwordConfirmation) {
-            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
-            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            if (!validationErrors.password) {
+                validationErrors.password = [];
+            }
+
+            if (!validationErrors.passwordConfirmation) {
+                validationErrors.passwordConfirmation = [];
+            }
+
+            validationErrors.password.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.passwordConfirmation.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
         }
 
         if (!firstname) {
-            validationErrors.push({ field: 'firstname', error: errors.REQUIRED });
+            validationErrors.firstname = [{ error: errors.REQUIRED }];
         }
 
         if (!lastname) {
-            validationErrors.push({ field: 'lastname', error: errors.REQUIRED });
+            validationErrors.lastname = [{ error: errors.REQUIRED }];
         }
 
-        if (validationErrors.length) {
+        if (Object.entries(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
@@ -87,26 +95,26 @@ exports.logIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (email) {
             if (!validator.isEmail(email)) {
-                validationErrors.push({ field: 'email', error: errors.INVALID_FORMAT });
+                validationErrors.email = [{ error: errors.INVALID_FORMAT }];
             }
         } else {
-            validationErrors.push({ field: 'email', error: errors.REQUIRED });
+            validationErrors.email = [{ error: errors.REQUIRED }];
         }
 
         if (password) {
             const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+                validationErrors.password = [{ error: errors.INVALID_FORMAT, data: passwordValidation }];
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+            validationErrors.password = [{ error: errors.REQUIRED }];
         }
 
-        if (validationErrors.length) {
+        if (Object.entries(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
@@ -166,23 +174,31 @@ exports.changePassword = async (req, res, next) => {
     try {
         const password = req.body.password;
         const passwordConfirmation = req.body.passwordConfirmation;
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (password) {
             const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+                validationErrors.password = [{ error: errors.INVALID_FORMAT, data: passwordValidation }];
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+            validationErrors.password = [{ error: errors.REQUIRED }];
         }
 
         if (password !== passwordConfirmation) {
-            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
-            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            if (!validationErrors.password) {
+                validationErrors.password = [];
+            }
+
+            if (!validationErrors.passwordConfirmation) {
+                validationErrors.passwordConfirmation = [];
+            }
+
+            validationErrors.password.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.passwordConfirmation.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
         }
 
-        if (validationErrors.length) {
+        if (Object.entries(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
@@ -250,23 +266,31 @@ exports.resetPassword = async (req, res, next) => {
         if (!user) {
             throw errorFactory(401, errors.INVALID_RESET_PASSWORD_TOKEN);
         }
-        const validationErrors = [];
+        const validationErrors = {};
 
         if (password) {
             const passwordValidation = { min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH };
             if (!validator.isLength(password, passwordValidation)) {
-                validationErrors.push({ field: 'password', error: errors.INVALID_FORMAT, data: passwordValidation });
+                validationErrors.password = [{ error: errors.INVALID_FORMAT, data: passwordValidation }];
             };
         } else {
-            validationErrors.push({ field: 'password', error: errors.REQUIRED });
+            validationErrors.password = [{ error: errors.REQUIRED }];
         }
 
         if (password !== passwordConfirmation) {
-            validationErrors.push({ field: 'password', error: errors.PASSWORDS_ARE_NOT_EQUAL });
-            validationErrors.push({ field: 'passwordConfirmation', error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            if (!validationErrors.password) {
+                validationErrors.password = [];
+            }
+
+            if (!validationErrors.passwordConfirmation) {
+                validationErrors.passwordConfirmation = [];
+            }
+
+            validationErrors.password.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
+            validationErrors.passwordConfirmation.push({ error: errors.PASSWORDS_ARE_NOT_EQUAL });
         }
 
-        if (validationErrors.length) {
+        if (Object.entries(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 

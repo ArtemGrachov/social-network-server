@@ -26,7 +26,7 @@ exports.searchUser = async (req, res, next) => {
             throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
         }
 
-        const validationErrors = [];
+        const validationErrors = {};
 
         const fields = [
             { field: 'firstname', min: 3 },
@@ -49,23 +49,29 @@ exports.searchUser = async (req, res, next) => {
             }
 
             if (!validator.isLength(value, lengthValidation)) {
-                validationErrors.push({
-                    field,
+                if (!validationErrors[field]) {
+                    validationErrors[field] = [];
+                }
+
+                validationErrors[field].push({
                     error: errors.INVALID_LENGTH,
                     data: lengthValidation
                 });
             }
 
             if (!validator.matches(value, format)) {
-                validationErrors.push({
-                    field,
-                    error: errors.INVALID_FORMAT,
-                    data: format.toString()
+                if (!validationErrors[field]) {
+                    validationErrors[field] = [];
+                }
+
+                validationErrors[field].push({
+                    error: errors.INVALID_LENGTH,
+                    data: lengthValidation
                 });
             }
         });
 
-        if (validationErrors.length) {
+        if (Object.keys(validationErrors).length) {
             throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
@@ -123,25 +129,31 @@ exports.searchPost = async (req, res, next) => {
             throw errorFactory(422, errors.INVALID_INPUT);
         }
 
-        const validationErrors = [];
+        const validationErrors = {};
         const lengthValidation = { min: 3 };
 
         if (content) {
             if (!validator.isLength(content, lengthValidation)) {
-                validationErrors.push({
-                    field: 'content',
+                validationErrors.content = [{
                     error: errors.INVALID_LENGTH,
                     data: lengthValidation
-                });
+                }];
             }
 
             if (!validator.matches(content, format)) {
-                validationErrors.push({
-                    field: 'content',
+                if (!validationErrors.content) {
+                    validationErrors.content = [];
+                }
+
+                validationErrors.content.push({
                     error: errors.INVALID_FORMAT,
                     data: format.toString()
                 });
             }
+        }
+
+        if (Object.keys(validationErrors).length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
         const { rows, count: total } = await Post.findAndCountAll({
