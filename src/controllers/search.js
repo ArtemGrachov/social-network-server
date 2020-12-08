@@ -49,14 +49,10 @@ exports.searchUser = async (req, res, next) => {
             }
 
             if (!validator.isLength(value, lengthValidation)) {
-                if (!validationErrors[field]) {
-                    validationErrors[field] = [];
-                }
-
-                validationErrors[field].push({
+                validationErrors[field] = [{
                     error: errors.INVALID_LENGTH,
                     data: lengthValidation
-                });
+                }];
             }
 
             if (!validator.matches(value, format)) {
