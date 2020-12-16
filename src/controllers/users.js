@@ -7,6 +7,7 @@ const errors = require('../errors');
 exports.userGet = async (req, res, next) => {
     try {
         const { userId } = req.params;
+        const { min } = req.query;
 
         const userInstance = await User.findByPk(userId);
 
@@ -14,7 +15,13 @@ exports.userGet = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        const user = await userInstance.serialize(req.user);
+        let user;
+
+        if (min) {
+            user = await userInstance.serializeMin(req.user);
+        } else {
+            user = await userInstance.serialize(req.user);
+        }
 
         res
             .status(200)
