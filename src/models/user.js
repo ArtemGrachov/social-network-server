@@ -111,7 +111,24 @@ User.prototype.getResetPasswordToken = function() {
 
 User.prototype.serialize = async function(userInstance) {
     const { id, firstname, lastname, country, city, phone, avatarURL, status } = this;
-    const result = { id, firstname, lastname, country, city, phone, avatarURL, status };
+    const [subscriptionsCount, subscribersCount] = await Promise.all([
+        this.countSubscriptions(),
+        this.countSubscribers()
+    ]);
+
+    const result = {
+        id,
+        firstname,
+        lastname,
+        country,
+        city,
+        phone,
+        avatarURL,
+        status,
+        subscriptionsCount,
+        subscribersCount
+    };
+
 
     if (!userInstance) {
         return result;
