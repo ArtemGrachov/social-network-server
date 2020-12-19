@@ -44,15 +44,22 @@ Comment.prototype.serialize = async function(userInstance) {
 
     const result = { id, content, postId, authorId, referenceId };
 
+
+    const likesCount = await this.countLikedUser();
+
     if (!userInstance) {
-        return result;
+        return {
+            ...result,
+            likesCount
+        };
     }
 
     const liked = await userInstance.hasLikedComment(this);
 
     return {
         ...result,
-        liked
+        liked,
+        likesCount
     };
 }
 

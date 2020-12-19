@@ -57,12 +57,16 @@ Post.prototype.serialize = async function(userInstance) {
         authorId: this.authorId
     }
 
-    const commentsCount = await this.countComments();
+    const [commentsCount, likesCount] = await Promise.all([
+        this.countComments(),
+        this.countLikedUser()
+    ]);
 
     if (!userInstance) {
         return {
             ...result,
-            commentsCount
+            commentsCount,
+            likesCount
         };
     }
 
@@ -71,7 +75,8 @@ Post.prototype.serialize = async function(userInstance) {
     return {
         ...result,
         liked,
-        commentsCount
+        commentsCount,
+        likesCount
     };
 }
 
