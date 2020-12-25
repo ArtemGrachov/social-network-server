@@ -16,6 +16,7 @@ const usersRoutes = require('./routes/users');
 const userRoutes = require('./routes/user');
 const commentsRoutes = require('./routes/comments');
 const searchRouters = require('./routes/search');
+const chatsRouters = require('./routes/chats');
 
 const constants = require('./constants');
 const errors = require('./errors');
@@ -36,6 +37,7 @@ app.use('/users', usersRoutes);
 app.use('/user', userRoutes);
 app.use('/comments', commentsRoutes);
 app.use('/search', searchRouters);
+app.use('/chats', chatsRouters);
 
 app.use((err, req, res, next) => {
     console.log(err);

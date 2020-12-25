@@ -34,15 +34,15 @@ const ChatMessage = sequelize.define('ChatMessage', {
 ChatMessage.associate = models => {
     ChatMessage.belongsToMany(models.Chat, {
         through: 'chatsChatMessages',
-        foreignKey: 'chatMessageId',
-        otherKey: 'chatId',
+        foreignKey: 'chatId',
+        otherKey: 'chatMessageId',
         as: 'chat'
     });
 
     ChatMessage.belongsToMany(models.User, {
         through: 'usersChatMessages',
-        foreignKey: 'chatMessageId',
-        otherKey: 'userId',
+        foreignKey: 'userId',
+        otherKey: 'chatMessageId',
         as: 'user'
     });
 }

@@ -11,11 +11,14 @@ const Chat = sequelize.define('Chat', {
 });
 
 Chat.associate = models => {
-    Chat.belongsToMany(models.Chat, {
+    Chat.belongsToMany(models.User, {
         through: 'chatsUsers',
         foreignKey: 'userId',
         otherKey: 'chatId',
-        as: 'user'
+        as: {
+            singular: 'user',
+            plural:  'users'
+        }
     });
 }
 

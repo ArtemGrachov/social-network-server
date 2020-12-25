@@ -84,15 +84,18 @@ User.associate = models => {
 
     User.belongsToMany(models.Chat, {
         through: 'chatsUsers',
-        foreignKey: 'userId',
-        otherKey: 'chatId',
-        as: 'chat'
+        foreignKey: 'chatId',
+        otherKey: 'userId',
+        as: {
+            singular: 'chat',
+            plural:  'chats'
+        }
     });
 
     User.belongsToMany(models.ChatMessage, {
         through: 'usersChatMessages',
-        foreignKey: 'userId',
-        otherKey: 'chatMessageId',
+        foreignKey: 'chatMessageId',
+        otherKey: 'userId',
         as: 'chatMessage'
     });
 };
