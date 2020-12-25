@@ -6,6 +6,8 @@ const sequelize = require('./models/index');
 require('./models/user');
 require('./models/post');
 require('./models/comment');
+require('./models/chat');
+require('./models/chats-users');
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
