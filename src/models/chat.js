@@ -15,7 +15,7 @@ Chat.associate = models => {
         through: 'chatsUsers',
         foreignKey: 'userId',
         otherKey: 'chatId',
-        as: 'chat'
+        as: 'user'
     });
 }
 

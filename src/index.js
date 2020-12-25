@@ -7,7 +7,7 @@ require('./models/user');
 require('./models/post');
 require('./models/comment');
 require('./models/chat');
-require('./models/chats-users');
+require('./models/chat-message');
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
