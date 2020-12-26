@@ -34,7 +34,8 @@ Chat.associate = models => {
 Chat.prototype.serialize = function() {
     const result = {
         id: this.id,
-        name: this.name || null
+        name: this.name || null,
+        isPrivate: this.isPrivate
     };
 
     return result;

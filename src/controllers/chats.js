@@ -41,10 +41,15 @@ exports.chatCreate = async (req, res, next) => {
             ...userInstances
         ].map(u => u.serializeMin(user)));
 
+        const chat = {
+            ...chatInstance.serialize(),
+            users: users.map(u => u.id)
+        };
+
         res
             .status(200)
             .json({
-                chat: chatInstance.serialize(),
+                chat,
                 users
             });
     } catch (err) {
@@ -98,10 +103,15 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
             userInstance
         ].map(u => u.serializeMin(user)));
 
+        const chat = {
+            ...chatInstance.serialize(),
+            users: users.map(u => u.id)
+        };
+
         res
             .status(200)
             .json({
-                chat: chatInstance.serialize(),
+                chat,
                 users
             });
     } catch (err) {
@@ -140,10 +150,15 @@ exports.chatGet = async (req, res, next) => {
                 .map(u => u.serializeMin(user))
         );
 
+        const chat = {
+            ...chatInstance.serialize(),
+            users: users.map(u => u.id)
+        };
+
         res
             .status(200)
             .json({
-                chat: chatInstance.serialize(),
+                chat,
                 users
             });
     } catch (err) {
@@ -151,3 +166,43 @@ exports.chatGet = async (req, res, next) => {
     }
 }
 
+exports.chatsGet = async (req, res, next) => {
+    try {
+        const { user } = req;
+
+        const chatsInstances = await user.getChats({
+            include: [
+                {
+                    model: User,
+                    as: 'users'
+                }
+            ]
+        });
+
+        const chats = chatsInstances.map(c => {
+            return {
+                ...c.serialize(),
+                users: c.users.map(u => u.id)
+            }
+        });
+
+        const usersMap = {};
+        chatsInstances.forEach(c => {
+            c.users.forEach(u => usersMap[u.id] = u);
+        });
+        
+        const users = await Promise.all(
+            Object.entries(usersMap)
+                .map(([_, u]) => u.serializeMin(user))
+        );
+
+        res
+            .status(200)
+            .json({
+                chats,
+                users
+            });
+    } catch (err) {
+        next(err);
+    }
+}
