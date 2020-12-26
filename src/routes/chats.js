@@ -11,4 +11,6 @@ router.get('/:chatId', checkAuth, chatsController.chatGet);
 
 router.get('/', checkAuth, chatsController.chatsGet);
 
+router.post('/:chatId/messages', checkAuth, chatsController.chatMessageCreate);
+
 module.exports = router;

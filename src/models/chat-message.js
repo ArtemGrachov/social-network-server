@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const htmlToText = require('html-to-text');
 
 const sequelize = require('./');
 
@@ -47,6 +48,17 @@ ChatMessage.associate = models => {
     ChatMessage.belongsTo(models.Chat, {
         foreignKey: 'chatId'
     });
+}
+
+ChatMessage.prototype.serialize = async function() {
+    const result = {
+        id: this.id,
+        content: this.content,
+        chatId: this.chatId,
+        authorId: this.authorId
+    };
+
+    return result;
 }
 
 module.exports = ChatMessage;

@@ -1,7 +1,9 @@
 const Chat = require('../models/chat');
 const User = require('../models/user');
+const ChatMessage = require('../models/chat-message');
 
 const errors = require('../errors');
+const success = require('../success');
 
 const errorFactory = require('../utils/error-factory');
 
@@ -86,6 +88,7 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
         });
 
         let chatInstance = chats[0];
+        let created = false;
 
         if (!chatInstance) {
             chatInstance = await Chat.create({
@@ -96,6 +99,8 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
                 chatInstance.addUser(user),
                 chatInstance.addUser(userInstance),
             ]);
+
+            created = true;
         }
 
         const users = await Promise.all([
@@ -112,7 +117,10 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
             .status(200)
             .json({
                 chat,
-                users
+                users,
+                message: created ?
+                    success.CHAT_CREATED_SUCCESSFULLY :
+                    success.CHAT_FOUND_SUCCESSFULLY
             });
     } catch (err) {
         next(err);
@@ -201,6 +209,48 @@ exports.chatsGet = async (req, res, next) => {
             .json({
                 chats,
                 users
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.chatMessageCreate = async (req, res, next) => {
+    try {
+        const { content } = req.body;
+        const { chatId } = req.params;
+        const { user } = req;
+        const validationErrors = {};
+
+        if (!content) {
+            validationErrors.content = [{ error: errors.REQUIRED }];
+        }
+
+        if (Object.keys(validationErrors).length) {
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
+        }
+
+        const chat = await Chat.findByPk(chatId);
+
+        if (!chat) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const chatMessageInstance = await ChatMessage.build({
+            content,
+            authorId: user.id,
+            chatId: chat.id
+        });
+
+        await chatMessageInstance.save();
+
+        const chatMessage = await chatMessageInstance.serialize(req.user);
+
+        res
+            .status(201)
+            .json({
+                message: success.CHAT_MESSAGE_CREATED_SUCCESSFULLY,
+                chatMessage
             });
     } catch (err) {
         next(err);
