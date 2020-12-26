@@ -6,6 +6,8 @@ const sequelize = require('./models/index');
 require('./models/user');
 require('./models/post');
 require('./models/comment');
+require('./models/chat');
+require('./models/chat-message');
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
@@ -14,6 +16,8 @@ const usersRoutes = require('./routes/users');
 const userRoutes = require('./routes/user');
 const commentsRoutes = require('./routes/comments');
 const searchRouters = require('./routes/search');
+const chatsRouters = require('./routes/chats');
+const chatMessagesRouters = require('./routes/chat-messages');
 
 const constants = require('./constants');
 const errors = require('./errors');
@@ -34,6 +38,8 @@ app.use('/users', usersRoutes);
 app.use('/user', userRoutes);
 app.use('/comments', commentsRoutes);
 app.use('/search', searchRouters);
+app.use('/chats', chatsRouters);
+app.use('/chat-messages', chatMessagesRouters);
 
 app.use((err, req, res, next) => {
     console.log(err);

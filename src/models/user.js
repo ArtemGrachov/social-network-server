@@ -81,6 +81,20 @@ User.associate = models => {
         otherKey: 'likedCommentId',
         as: 'likedComment'
     });
+
+    User.belongsToMany(models.Chat, {
+        through: 'chatsUsers',
+        foreignKey: 'userId',
+        otherKey: 'chatId',
+        as: {
+            singular: 'chat',
+            plural:  'chats'
+        }
+    });
+
+    User.hasMany(models.ChatMessage, {
+        foreignKey: 'authorId',
+    });
 };
 
 User.prototype.getAuthTokens = function() {
