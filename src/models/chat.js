@@ -31,4 +31,13 @@ Chat.associate = models => {
     });
 }
 
+Chat.prototype.serialize = function() {
+    const result = {
+        id: this.id,
+        name: this.name || null
+    };
+
+    return result;
+}
+
 module.exports = Chat;

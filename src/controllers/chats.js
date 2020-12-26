@@ -7,7 +7,7 @@ const errorFactory = require('../utils/error-factory');
 
 exports.chatCreate = async (req, res, next) => {
     try {
-        const { usersIds } = req.body;
+        const { usersIds, name } = req.body;
         const { user } = req;
 
         if (!(usersIds || []).length) {
@@ -25,6 +25,7 @@ exports.chatCreate = async (req, res, next) => {
         }
 
         const chatInstance = await Chat.create({
+            name,
             isPrivate: user.length > 1
         });
 
@@ -35,9 +36,17 @@ exports.chatCreate = async (req, res, next) => {
             ].map(u => chatInstance.addUser(u))
         );
 
+        const users = await Promise.all([
+            user,
+            ...userInstances
+        ].map(u => u.serializeMin(user)));
+
         res
             .status(200)
-            .json({ chat: chatInstance });
+            .json({
+                chat: chatInstance.serialize(),
+                users
+            });
     } catch (err) {
         next(err);
     }
@@ -47,6 +56,10 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
     try {
         const { userId } = req.body;
         const { user } = req;
+
+        if (userId == user.id) {
+            throw errorFactory(422, errors.INVALID_INPUT);
+        }
     
         const userInstance = await User.findByPk(userId);
     
@@ -67,24 +80,29 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
             }
         });
 
-        let chat = chats[0];
+        let chatInstance = chats[0];
 
-        if (!chat) {
-            chat = await Chat.create({
+        if (!chatInstance) {
+            chatInstance = await Chat.create({
                 isPrivate: true
             });
 
             await Promise.all([
-                chat.addUser(user),
-                chat.addUser(userInstance),
+                chatInstance.addUser(user),
+                chatInstance.addUser(userInstance),
             ]);
         }
+
+        const users = await Promise.all([
+            user,
+            userInstance
+        ].map(u => u.serializeMin(user)));
 
         res
             .status(200)
             .json({
-                myId: user.id,
-                chat
+                chat: chatInstance.serialize(),
+                users
             });
     } catch (err) {
         next(err);
