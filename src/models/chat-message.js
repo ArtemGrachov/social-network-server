@@ -39,11 +39,13 @@ ChatMessage.associate = models => {
         as: 'chat'
     });
 
-    ChatMessage.belongsToMany(models.User, {
-        through: 'usersChatMessages',
-        foreignKey: 'userId',
-        otherKey: 'chatMessageId',
-        as: 'user'
+    ChatMessage.belongsTo(models.User, {
+        foreignKey: 'authorId',
+        as: 'author'
+    });
+
+    ChatMessage.belongsTo(models.Chat, {
+        foreignKey: 'chatId'
     });
 }
 

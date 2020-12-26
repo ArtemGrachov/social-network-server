@@ -5,6 +5,11 @@ const sequelize = require('./');
 const Chat = sequelize.define('Chat', {
     name: {
         type: Sequelize.STRING
+    },
+    isPrivate: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     }
 }, {
     tableName: 'chats'
@@ -13,12 +18,16 @@ const Chat = sequelize.define('Chat', {
 Chat.associate = models => {
     Chat.belongsToMany(models.User, {
         through: 'chatsUsers',
-        foreignKey: 'userId',
-        otherKey: 'chatId',
+        foreignKey: 'chatId',
+        otherKey: 'userId',
         as: {
             singular: 'user',
             plural:  'users'
         }
+    });
+
+    Chat.hasMany(models.ChatMessage, {
+        foreignKey: 'chatId',
     });
 }
 

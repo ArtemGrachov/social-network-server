@@ -5,4 +5,6 @@ const chatsController = require('../controllers/chats');
 
 router.post('/', checkAuth, chatsController.chatCreate);
 
+router.post('/create-if-not-exist', checkAuth, chatsController.chatCreateOrUseExisting);
+
 module.exports = router;
