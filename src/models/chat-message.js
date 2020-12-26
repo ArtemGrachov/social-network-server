@@ -55,7 +55,8 @@ ChatMessage.prototype.serialize = async function() {
         id: this.id,
         content: this.content,
         chatId: this.chatId,
-        authorId: this.authorId
+        authorId: this.authorId,
+        createdAt: this.createdAt
     };
 
     return result;

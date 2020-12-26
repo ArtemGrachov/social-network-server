@@ -1,11 +1,13 @@
 const Chat = require('../models/chat');
 const User = require('../models/user');
 const ChatMessage = require('../models/chat-message');
+const { Op } = require('sequelize');
 
 const errors = require('../errors');
 const success = require('../success');
 
 const errorFactory = require('../utils/error-factory');
+const paginationFactory = require('../utils/pagination-factory');
 
 exports.chatCreate = async (req, res, next) => {
     try {
@@ -251,6 +253,60 @@ exports.chatMessageCreate = async (req, res, next) => {
             .json({
                 message: success.CHAT_MESSAGE_CREATED_SUCCESSFULLY,
                 chatMessage
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.chatMessagesGet = async (req, res, next) => {
+    try {
+        const { chatId } = req.params;
+        let { dateFrom, count } = req.query;
+
+        if (!count) {
+            throw errorFactory(422, errors.RECORDS_COUNT_REQUIRED);
+        }
+
+        if (!dateFrom) {
+            throw errorFactory(422, errors.DATE_REQUIRED);
+        }
+
+        const chatInstance = await Chat.findByPk(chatId);
+
+        if (!chatInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        count = +count;
+
+        const [total, messagesInstances] = await Promise.all([
+            chatInstance.countChatMessages(),
+            chatInstance.getChatMessages({
+                limit: count,
+                order: [['createdAt', 'DESC']],
+                where: {
+                    createdAt: {
+                        [Op.lte]: new Date(+dateFrom)
+                    }
+                }
+            }),
+        ]);
+
+        const messages = await Promise.all(messagesInstances.map(m => m.serialize()));
+        const messagesAuthors = new Set(messagesInstances.map(m => m.authorId));
+        const authorsInstances = await User.findAll({
+            where: { id: Array.from(messagesAuthors) }
+        });
+
+        const authors = await Promise.all(authorsInstances.map(author => author.serializeMin(req.user)));
+
+        res
+            .status(200)
+            .json({
+                messages,
+                authors,
+                pagination: paginationFactory(null, count, total)
             });
     } catch (err) {
         next(err);
