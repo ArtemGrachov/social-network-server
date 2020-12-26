@@ -109,3 +109,45 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
     }
 }
 
+exports.chatGet = async (req, res, next) => {
+    try {
+        const { chatId } = req.params;
+        const { user } = req;
+
+        if (chatId == null) {
+            throw errorFactory(422, errors.INVALID_INPUT);
+        }
+
+        const chats = await user.getChats({
+            where: {
+                id: chatId
+            },
+            include: [{
+                model: User,
+                as: 'users'
+            }]
+        });
+
+        if (!chats.length) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const chatInstance = chats[0];
+
+        const users = await Promise.all(
+            chatInstance
+                .users
+                .map(u => u.serializeMin(user))
+        );
+
+        res
+            .status(200)
+            .json({
+                chat: chatInstance.serialize(),
+                users
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+

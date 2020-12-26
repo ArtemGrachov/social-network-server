@@ -7,4 +7,6 @@ router.post('/', checkAuth, chatsController.chatCreate);
 
 router.post('/create-if-not-exist', checkAuth, chatsController.chatCreateOrUseExisting);
 
+router.get('/:chatId', checkAuth, chatsController.chatGet);
+
 module.exports = router;
