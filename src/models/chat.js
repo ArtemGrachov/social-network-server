@@ -23,7 +23,8 @@ Chat.associate = models => {
         as: {
             singular: 'user',
             plural:  'users'
-        }
+        },
+        allowNull: false
     });
 
     Chat.hasMany(models.ChatMessage, {

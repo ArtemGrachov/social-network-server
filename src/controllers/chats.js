@@ -287,7 +287,7 @@ exports.chatMessagesGet = async (req, res, next) => {
                 order: [['createdAt', 'DESC']],
                 where: {
                     createdAt: {
-                        [Op.lt]: new Date(+dateFrom)
+                        [Op.lte]: new Date(+dateFrom)
                     }
                 }
             }),

@@ -12,14 +12,28 @@ const Comment = sequelize.define('Comment', {
 });
 
 Comment.associate = models => {
-    Comment.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
-    Comment.belongsTo(models.User, { foreignKey: 'authorId', as: 'author' });
+    Comment.belongsTo(
+        models.Post,
+        {
+            foreignKey: 'postId',
+            as: 'post',
+            allowNull: false
+        }
+    );
+    Comment.belongsTo(
+        models.User,
+        {
+            foreignKey: 'authorId',
+            as: 'author',
+            allowNull: false
+        });
 
     Comment.belongsTo(
         models.Comment,
         {
             foreignKey: 'referenceId',
-            as: 'reference'
+            as: 'reference',
+            allowNull: false
         }
     );
 

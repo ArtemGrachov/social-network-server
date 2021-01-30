@@ -42,11 +42,13 @@ ChatMessage.associate = models => {
 
     ChatMessage.belongsTo(models.User, {
         foreignKey: 'authorId',
-        as: 'author'
+        as: 'author',
+        allowNull: false
     });
 
     ChatMessage.belongsTo(models.Chat, {
-        foreignKey: 'chatId'
+        foreignKey: 'chatId',
+        allowNull: false
     });
 }
 
