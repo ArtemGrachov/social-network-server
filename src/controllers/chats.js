@@ -3,6 +3,9 @@ const User = require('../models/user');
 const ChatMessage = require('../models/chat-message');
 const { Op } = require('sequelize');
 
+const socket = require('../socket');
+const socketEvents = require('../socket/events');
+
 const errors = require('../errors');
 const success = require('../success');
 
@@ -312,6 +315,24 @@ exports.chatMessageCreate = async (req, res, next) => {
                 message: success.CHAT_MESSAGE_CREATED_SUCCESSFULLY,
                 chatMessage
             });
+
+        const users = await chat.getUsers();
+
+        users.forEach(user => {
+            if (user.id === req.user.id) {
+                return;
+            }
+
+            socket.sendMessage(
+                user.id,
+                {
+                    type: socketEvents.NEW_CHAT_MESSAGE,
+                    payload: {
+                        chatMessage
+                    }
+                }
+            );
+        });
     } catch (err) {
         next(err);
     }

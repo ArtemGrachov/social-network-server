@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
+const socket = require('./socket');
+
 const sequelize = require('./models/index');
 require('./models/user');
 require('./models/post');
@@ -81,9 +83,10 @@ const init = async () => {
 
     const PORT = constants.PORT;
 
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
         console.log(`Server running on http://localhost:${PORT}`);
     });
+    socket.init(server);
 };
 
 init();

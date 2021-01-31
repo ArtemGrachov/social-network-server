@@ -1,0 +1,5 @@
+module.exports = {
+    NEW_SUBSCRIBER: 'NEW_SUBSCRIBER',
+    NEW_LIKE: 'NEW_LIKE',
+    NEW_CHAT_MESSAGE: 'NEW_CHAT_MESSAGE'
+};
