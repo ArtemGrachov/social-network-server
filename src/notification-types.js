@@ -1,0 +1,5 @@
+module.exports = {
+    NEW_SUBSCRIBER: 'NEW_SUBSCRIBER',
+    NEW_COMMENT: 'NEW_COMMENT',
+    NEW_LIKE: 'NEW_LIKE'
+};

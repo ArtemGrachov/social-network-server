@@ -1,11 +1,13 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Notification = require('../models/notification');
 
 const socket = require('../socket');
 const socketEvents = require('../socket/events');
 
 const errors = require('../errors');
 const success = require('../success');
+const notificationTypes = require('../notification-types');
 
 const errorFactory = require('../utils/error-factory');
 const paginationFactory = require('../utils/pagination-factory');
@@ -85,7 +87,16 @@ exports.userSubscribeTo = async (req, res, next) => {
                 subscriptionId: subscription.id
             });
 
-        const userSerialized = await req.user.serializeMin(subscription);
+        const [userSerialized] = await Promise.all([
+            req.user.serializeMin(subscription),
+            Notification.create({
+                type: notificationTypes.NEW_SUBSCRIBER,
+                jsonPayload: JSON.stringify({
+                    subscriberId: req.user.id
+                }),
+                owner: subscription
+            })
+        ])
 
         socket.sendMessage(
             subscription.id,

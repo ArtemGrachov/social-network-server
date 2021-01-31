@@ -1,8 +1,10 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
+const Notification = require('../models/notification');
 
 const errors = require('../errors');
 const success = require('../success');
+const notificationTypes = require('../notification-types');
 
 const errorFactory = require('../utils/error-factory');
 
@@ -52,7 +54,17 @@ exports.commentCreate = async (req, res, next) => {
 
         await commentInstance.save();
 
-        const comment = await commentInstance.serialize(req.user);
+        const [comment] = await Promise.all([
+            commentInstance.serialize(req.user),
+            Notification.create({
+                type: notificationTypes.NEW_COMMENT,
+                jsonPayload: JSON.stringify({
+                    authorId: req.user.id,
+                    postId: post.id
+                }),
+                owner: post.authorId
+            })
+        ]);
 
         res
             .status(201)
@@ -142,13 +154,25 @@ exports.commentAddLike = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        await commentInstance.addLikedUser(req.user);
+        await Promise.all([
+            commentInstance.addLikedUser(req.user),
+            Notification.create({
+                type: notificationTypes.NEW_LIKE,
+                jsonPayload: JSON.stringify({
+                    likeAuthorId: req.user.id,
+                    referenceId: commentId,
+                    referenceType: 'comment'
+                }),
+                owner: commentInstance.authorId
+            })
+        ]);
 
         res
             .status(200)
             .json({
                 message: success.COMMENT_LIKED_SUCCESSFULLY,
                 commentId: commentInstance.id
+                
             });
     } catch (err) {
         next(err);

@@ -10,6 +10,7 @@ require('./models/post');
 require('./models/comment');
 require('./models/chat');
 require('./models/chat-message');
+require('./models/notification');
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');

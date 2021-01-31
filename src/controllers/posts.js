@@ -4,6 +4,7 @@ const errorFactory = require('../utils/error-factory');
 const paginationFactory = require('../utils/pagination-factory');
 const errors = require('../errors');
 const success = require('../success');
+const Notification = require('../models/notification');
 
 exports.postCreate = async (req, res, next) => {
     try {
@@ -123,6 +124,16 @@ exports.postAddLike = async (req, res, next) => {
                 message: success.POST_LIKED_SUCCESSFULLY,
                 postId: postInstance.id
             });
+
+        await Notification.create({
+            type: notificationTypes.NEW_LIKE,
+            jsonPayload: JSON.stringify({
+                likeAuthorId: req.user.id,
+                referenceId: postId,
+                referenceType: 'post'
+            }),
+            owner: post.authorId
+        });
     } catch (err) {
         next(err);
     }

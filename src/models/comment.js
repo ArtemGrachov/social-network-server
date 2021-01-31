@@ -26,7 +26,8 @@ Comment.associate = models => {
             foreignKey: 'authorId',
             as: 'author',
             allowNull: false
-        });
+        }
+    );
 
     Comment.belongsTo(
         models.Comment,

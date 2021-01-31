@@ -95,6 +95,15 @@ User.associate = models => {
     User.hasMany(models.ChatMessage, {
         foreignKey: 'authorId',
     });
+    console.log('1!!!!!!!!!!!!!!!!!!!!!!', models.Notification)
+    User.hasMany(
+        models.Notification,
+        {
+            foreignKey: 'notificationId',
+            as: 'notification',
+            allowNull: false
+        }
+    );
 };
 
 User.prototype.getAuthTokens = function() {
