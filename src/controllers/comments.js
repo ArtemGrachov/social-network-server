@@ -1,8 +1,10 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
-const errorFactory = require('../utils/error-factory');
+
 const errors = require('../errors');
 const success = require('../success');
+
+const errorFactory = require('../utils/error-factory');
 
 exports.commentCreate = async (req, res, next) => {
     try {

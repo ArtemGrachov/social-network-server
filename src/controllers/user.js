@@ -1,9 +1,14 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-const errorFactory = require('../utils/error-factory');
-const paginationFactory = require('../utils/pagination-factory');
+
+const socket = require('../socket');
+const socketEvents = require('../socket/events');
+
 const errors = require('../errors');
 const success = require('../success');
+
+const errorFactory = require('../utils/error-factory');
+const paginationFactory = require('../utils/pagination-factory');
 
 exports.userUpdate = async (req, res, next) => {
     try {
@@ -79,6 +84,16 @@ exports.userSubscribeTo = async (req, res, next) => {
                 message: success.SUBSCRIPTION_ADDED_SUCCESSFULLY,
                 subscriptionId: subscription.id
             });
+
+        const userSerialized = await req.user.serializeMin(subscription);
+
+        socket.sendMessage(
+            subscription.id,
+            {
+                type: socketEvents.SUBSCRIBER_ADDED,
+                payload: userSerialized
+            }
+        );
     } catch (err) {
         next(err);
     };
