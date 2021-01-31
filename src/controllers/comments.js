@@ -54,17 +54,22 @@ exports.commentCreate = async (req, res, next) => {
 
         await commentInstance.save();
 
-        const [comment] = await Promise.all([
-            commentInstance.serialize(req.user),
-            Notification.create({
-                type: notificationTypes.NEW_COMMENT,
-                jsonPayload: JSON.stringify({
-                    authorId: req.user.id,
-                    postId: post.id
-                }),
-                owner: post.authorId
-            })
-        ]);
+        const promises = [commentInstance.serialize(req.user)];
+
+        if (req.user.id != post.authorId) {
+            promises.push(
+                Notification.create({
+                    type: notificationTypes.NEW_COMMENT,
+                    jsonPayload: JSON.stringify({
+                        authorId: req.user.id,
+                        postId: post.id
+                    }),
+                    ownerId: post.authorId
+                })
+            );
+        }
+
+        const [comment] = await Promise.all(promises);
 
         res
             .status(201)
@@ -154,18 +159,23 @@ exports.commentAddLike = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        await Promise.all([
-            commentInstance.addLikedUser(req.user),
-            Notification.create({
-                type: notificationTypes.NEW_LIKE,
-                jsonPayload: JSON.stringify({
-                    likeAuthorId: req.user.id,
-                    referenceId: commentId,
-                    referenceType: 'comment'
-                }),
-                owner: commentInstance.authorId
-            })
-        ]);
+        const promises = [commentInstance.addLikedUser(req.user)];
+
+        if (req.user.id != commentInstance.authorId) {
+            promises.push(
+                Notification.create({
+                    type: notificationTypes.NEW_LIKE,
+                    jsonPayload: JSON.stringify({
+                        likeAuthorId: req.user.id,
+                        referenceId: commentId,
+                        referenceType: 'comment'
+                    }),
+                    ownerId: commentInstance.authorId
+                })
+            );
+        }
+
+        await Promise.all(promises);
 
         res
             .status(200)

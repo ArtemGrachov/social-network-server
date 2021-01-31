@@ -95,12 +95,12 @@ User.associate = models => {
     User.hasMany(models.ChatMessage, {
         foreignKey: 'authorId',
     });
-    console.log('1!!!!!!!!!!!!!!!!!!!!!!', models.Notification)
+
     User.hasMany(
         models.Notification,
         {
-            foreignKey: 'notificationId',
-            as: 'notification',
+            foreignKey: 'ownerId',
+            as: 'owner',
             allowNull: false
         }
     );

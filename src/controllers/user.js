@@ -94,7 +94,7 @@ exports.userSubscribeTo = async (req, res, next) => {
                 jsonPayload: JSON.stringify({
                     subscriberId: req.user.id
                 }),
-                owner: subscription
+                ownerId: subscription.id
             })
         ])
 
