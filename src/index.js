@@ -18,9 +18,10 @@ const postsRoutes = require('./routes/posts');
 const usersRoutes = require('./routes/users');
 const userRoutes = require('./routes/user');
 const commentsRoutes = require('./routes/comments');
-const searchRouters = require('./routes/search');
-const chatsRouters = require('./routes/chats');
-const chatMessagesRouters = require('./routes/chat-messages');
+const searchRoutes = require('./routes/search');
+const chatsRoutes = require('./routes/chats');
+const chatMessagesRoutes = require('./routes/chat-messages');
+const notificationsRoutes = require('./routes/notifications');
 
 const constants = require('./constants');
 const errors = require('./errors');
@@ -40,9 +41,10 @@ app.use('/posts', postsRoutes);
 app.use('/users', usersRoutes);
 app.use('/user', userRoutes);
 app.use('/comments', commentsRoutes);
-app.use('/search', searchRouters);
-app.use('/chats', chatsRouters);
-app.use('/chat-messages', chatMessagesRouters);
+app.use('/search', searchRoutes);
+app.use('/chats', chatsRoutes);
+app.use('/chat-messages', chatMessagesRoutes);
+app.use('/notifications', notificationsRoutes);
 
 app.use((err, req, res, next) => {
     console.log(err);

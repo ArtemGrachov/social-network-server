@@ -33,7 +33,7 @@ const User = sequelize.define('User', {
 });
 
 User.associate = models => {
-    User.hasMany(models.Post, { foreignKey: 'authorId', as: 'author' });
+    User.hasMany(models.Post, { foreignKey: 'authorId', as: 'post' });
 
     User.belongsToMany(
         models.User,
@@ -100,7 +100,10 @@ User.associate = models => {
         models.Notification,
         {
             foreignKey: 'ownerId',
-            as: 'owner',
+            as: {
+                singular: 'notification',
+                plural:  'notifications'
+            },
             allowNull: false
         }
     );
