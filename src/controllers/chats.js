@@ -30,7 +30,7 @@ exports.chatCreate = async (req, res, next) => {
 
         const chatInstance = await Chat.create({
             name,
-            isPrivate: user.length > 1
+            isPrivate: usersIds.length === 1
         });
 
         await Promise.all(
@@ -61,6 +61,64 @@ exports.chatCreate = async (req, res, next) => {
     }
 }
 
+exports.chatFindPrivate = async (req, res, next) => {
+    try {
+        const { userId } = req.body;
+        const { user } = req;
+
+        if (userId == user.id) {
+            throw errorFactory(422, errors.INVALID_INPUT);
+        }
+
+        const userInstance = await User.findByPk(userId);
+    
+        if (!userInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const chats = await user.getChats({
+            include: [{
+                model: User,
+                as: 'users',
+                where: {
+                    id: userId
+                }
+            }],
+            where: {
+                isPrivate: true
+            }
+        });
+
+        const chatInstance = chats[0];
+        let users;
+        let chat;
+
+        if (chatInstance) {
+            users = await Promise.all([
+                user,
+                userInstance
+            ].map(u => u.serializeMin(user)));
+
+            chat = {
+                ...chatInstance.serialize(),
+                users: users.map(u => u.id)
+            };
+        }
+
+        res
+            .status(200)
+            .json({
+                chat,
+                users,
+                message: chat ?
+                    success.CHAT_FOUND_SUCCESSFULLY :
+                    success.CHAT_DOES_NOT_EXIST
+            });
+    } catch (err) {
+        next(err);
+    }
+}
+
 exports.chatCreateOrUseExisting = async (req, res, next) => {
     try {
         const { userId } = req.body;
@@ -69,7 +127,7 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
         if (userId == user.id) {
             throw errorFactory(422, errors.INVALID_INPUT);
         }
-    
+
         const userInstance = await User.findByPk(userId);
     
         if (!userInstance) {
