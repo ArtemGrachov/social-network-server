@@ -30,7 +30,10 @@ Notification.associate = models => {
 
 Notification.prototype.serialize = async function(user) {
     const payload = JSON.parse(this.jsonPayload);
-    const result = { type: this.type };
+    const result = {
+        id: this.id,
+        type: this.type
+    };
 
     switch (this.type) {
         case notificationTypes.NEW_COMMENT: {
