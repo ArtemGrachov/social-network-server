@@ -34,7 +34,8 @@ Notification.prototype.serialize = async function(user) {
     const payload = JSON.parse(this.jsonPayload);
     const result = {
         id: this.id,
-        type: this.type
+        type: this.type,
+        createdAt: this.createdAt
     };
 
     switch (this.type) {
