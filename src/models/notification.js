@@ -3,6 +3,8 @@ const Sequelize = require('sequelize');
 const sequelize = require('./');
 
 const notificationTypes = require('../notification-types');
+const socket = require('../socket');
+const socketEvents = require('../socket/events');
 
 const Notification = sequelize.define('Notification', {
     type: {
@@ -101,5 +103,20 @@ Notification.prototype.serialize = async function(user) {
 
     return result;
 }
+
+Notification.afterCreate(async function(instance, options) {
+    const owner = await sequelize.models.User.findByPk(instance.ownerId);
+    const notification = await instance.serialize(owner);
+
+    socket.sendMessage(
+        instance.ownerId,
+        {
+            type: socketEvents.NEW_NOTIFICATION,
+            payload: {
+                notification
+            }
+        }
+    )
+});
 
 module.exports = Notification;
