@@ -38,3 +38,5 @@ services:
       - MYSQL_DATABASE=seven_nineteen_db
       - MYSQL_USER=seven_nineteen_user
       - MYSQL_PASSWORD=123456
+    volumes:
+      - ./database:/var/lib/mysql
