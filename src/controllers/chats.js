@@ -53,6 +53,23 @@ exports.chatCreate = async (req, res, next) => {
             users: users.map(u => u.id)
         };
 
+        users.forEach(user => {
+            if (user.id === req.user.id) {
+                return;
+            }
+
+            socket.sendMessage(
+                user.id,
+                {
+                    type: socketEvents.NEW_CHAT,
+                    payload: {
+                        chat,
+                        users
+                    }
+                }
+            );
+        });
+
         res
             .status(200)
             .json({
@@ -175,6 +192,19 @@ exports.chatCreateOrUseExisting = async (req, res, next) => {
             ...chatInstance.serialize(),
             users: users.map(u => u.id)
         };
+
+        if (created) {
+            socket.sendMessage(
+                userInstance.id,
+                {
+                    type: socketEvents.NEW_CHAT,
+                    payload: {
+                        chat,
+                        users
+                    }
+                }
+            );
+        }
 
         res
             .status(200)

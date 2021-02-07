@@ -124,7 +124,8 @@ exports.commentUpdate = async (req, res, next) => {
 
 exports.commentDelete = async (req, res, next) => {
     try {
-        const { commentId } = req.params;
+        let { commentId } = req.params;
+        commentId = +commentId;
 
         const commentInstance = await Comment.findByPk(commentId);
 
