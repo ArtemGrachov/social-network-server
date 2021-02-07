@@ -15,4 +15,6 @@ router.delete('/:postId/likes', checkAuth, postsController.postDeleteLike);
 
 router.get('/:postId/comments', postsController.postGetComments);
 
+router.get('/:postId', postsController.postGet);
+
 module.exports = router;

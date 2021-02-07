@@ -221,3 +221,29 @@ exports.postGetComments = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.postGet = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+
+        const postInstance = await Post.findByPk(postId, { include: ['author'] });
+
+        if (!postInstance) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const [post, author] = await Promise.all([
+            postInstance.serialize(req.user),
+            postInstance.author.serializeMin(req.user)
+        ]);
+
+        res
+            .status(200)
+            .json({
+                post,
+                author
+            });
+    } catch (err) {
+        next(err);
+    }
+}
