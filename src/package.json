@@ -21,6 +21,6 @@
     "sequelize": "^6.3.3",
     "sequelize-cli": "^6.2.0",
     "validator": "^13.1.1",
-    "ws": "^7.4.2"
+    "ws": "^7.4.6"
   }
 }
